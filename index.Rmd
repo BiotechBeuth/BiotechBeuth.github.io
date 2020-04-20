@@ -1,6 +1,85 @@
-# Minimal
+---
+title: "R Intro für Biotechnologen"
+author: "U. Rieger"
+output: html_document
+---
 
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+# Laden benötigter Pakete
+
+In diesem Intro werden wir mit dem Paket Biotech arbeiten, dieses installieren wir mit:
+```{r , eval = F}
+devtools::install_github("https://github.com/Utzi1/Biotech")
+```
+Installieren müssen wir es nur ein Mal, danach jedoch müssen wir in jedem Skript, in welchem es zum Einsatz kommt, auf seine Existenz verweisen, wir müssen es "laden":
+```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+library(Biotech)
+# Wir laden auch tidverse, dieses Paket enthält eine Menge
+# nützlicher Funktionen
+library(tidyverse)
+```
+# Eine Konzentrationsbestimmung
+
+Ihr habt im Labor den Bradfor-Assy durchgeführt und mit Rinderserumalbumin eine Standardreihe aufgenommen, dazu wurden zu jeder Verdünnung vier technische Replikate angefertigt und deren Absorption gemäß der Vorschrift gemessen.
+Die Ergebnisse der Messung lauten:
 ````{r}
-x <- 1 + 1
-print(x)
+Std <- tibble(
+  mes.1 = c(0.031,	0.092,	0.191,	0.278,	0.332, 0.363),
+  mes.2 = c(0.04, 0.103, 0.201, 0.279, 0.348, 0.36),
+  mes.3 = c(0.009, 0.077, 0.166, 0.205, 0.25, 0.397), 
+  mes.4 = c(0.007, 0.084, 0.166, 0.205, 0.353, 0.371),
+  )
 ````
+Diese fassen wir gleich als tibble zusammen.
+Zusätzlich dazu brauchen wir eine Vector, welcher Information über die Konzentration des BSA in den angesetzten Standards (in $\frac{\mu g}{ml}$) bereithält:
+```{r}
+conc <- seq(
+            # die geringste Konzentration
+            from = 0,
+            # die Höchste Konzentration
+            to = 100,
+            # die Länge
+            length.out = 
+                # diese muss der Anzahl der Messungen entsprechen
+                length(Std$mes.1)
+            )
+```
+Die Länge (also Anzahl der einzelnen Werte muss der Anzahl der Standards entsprechen) wird über das Argument length.out gesteuert.
+Als Nächstes berechnen wir das arithmetische Mittel der technischen Replikate:
+```{r}
+Std.mean <- rowMeans(Std)
+```
+Damit haben wir nun alles um ein lineares Modell vom Typ $y = m \cdot x + b$ zu errechnen und zu plotten, dies geht recht leicht:
+```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+# Berechnen des Modells
+LinMod(abs = Std.mean, conc = conc) %>%
+  pander::pander()
+# Plotten des Modells
+plot_regression(abs = Std.mean, conc = conc)
+```
+Nach dem selben Verfahren wie die Standardreihe wurde auch mit Proben unbekannter Konzentration verfahren, für diese wurden folgende Absorptionswerte gemessen:
+```{r message=FALSE, warning=FALSE}
+# die gmessenen Werte:
+mes.1 <- c(0.185, 0.245, 0.399, 0.429, 0.448, 0.431)
+# defineiren des Verdünnunsfaktor
+FV <- c(80, 80, 40, 40, 20, 20)
+# Hieraus berechnen wir dann direkt die Konzentrationen:
+conc.mes <- 
+    conc_eval(abs_P = mes.1, abs_std = Std.mean, conc_std = conc)
+conc.rea <- 
+    conc.mes * FV
+print(conc.rea)
+```
+Bei genauerer Betrachtung fällt auf, dass die Werte, welche zu den höheren Konzentrationen gehören viel geringere Konzentrationen Aufweisen, als jene der schwachen Verdünnungen.
+Dies lässt sich damit erklären, dass der Bradford Assay nur innerhalb eines bestimmten linearen Bereichs zuverlässige Ergebnisse liefert.
+Dieser liegt in der Regel unterhalb einer Konzentration von $120 \frac{\mu g}{ml}$, ein Vergleich der Messwerte mit den theoretischen Konzentrationen ist dabei Hilfreich.
+
+
+
+
+
+
+
