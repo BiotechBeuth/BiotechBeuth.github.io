@@ -1,7 +1,10 @@
 ---
 title: "R Intro für Biotechnologen"
 author: "U. Rieger"
-output: html_document
+output: 
+  html_document: 
+    fig_caption: yes
+    toc: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -17,14 +20,39 @@ devtools::install_github("https://github.com/Utzi1/Biotech")
 Installieren müssen wir es nur ein Mal, danach jedoch müssen wir in jedem Skript, in welchem es zum Einsatz kommt, auf seine Existenz verweisen, wir müssen es "laden":
 ```{r message=FALSE, warning=FALSE, paged.print=FALSE}
 library(Biotech)
+
 # Wir laden auch tidverse, dieses Paket enthält eine Menge
 # nützlicher Funktionen
 library(tidyverse)
 ```
 # Eine Konzentrationsbestimmung
 
-Ihr habt im Labor den Bradfor-Assy durchgeführt und mit Rinderserumalbumin eine Standardreihe aufgenommen, dazu wurden zu jeder Verdünnung vier technische Replikate angefertigt und deren Absorption gemäß der Vorschrift gemessen.
+## Rohdatenverarbeitung
+
+Ihr habt im Labor den Bradford-Assay durchgeführt und mit Rinderserumalbumin eine Standardreihe aufgenommen, dazu wurden zu jeder Verdünnung vier technische Replikate angefertigt und deren Absorption gemäß der Vorschrift gemessen.
 Die Ergebnisse der Messung lauten:
+```{r echo=FALSE}
+Std <- tibble(
+  mes.1 = c(0.031,	0.092,	0.191,	0.278,	0.332, 0.363),
+  mes.2 = c(0.04, 0.103, 0.201, 0.279, 0.348, 0.36),
+  mes.3 = c(0.009, 0.077, 0.166, 0.205, 0.25, 0.397), 
+  mes.4 = c(0.007, 0.084, 0.166, 0.205, 0.353, 0.371),
+  )
+conc <- seq(
+            # die geringste Konzentration
+            from = 0,
+            # die Höchste Konzentration
+            to = 100,
+            # die Länge
+            length.out = 
+                # diese muss der Anzahl der Messungen entsprechen
+                length(Std$mes.1)
+            )
+Std$"conc" <- conc
+pander::pander(Std)
+```
+
+Diese fassen wir gleich als tibble zusammen:
 ```{r}
 Std <- tibble(
   mes.1 = c(0.031,	0.092,	0.191,	0.278,	0.332, 0.363),
@@ -33,7 +61,6 @@ Std <- tibble(
   mes.4 = c(0.007, 0.084, 0.166, 0.205, 0.353, 0.371),
   )
 ```
-Diese fassen wir gleich als tibble zusammen.
 Zusätzlich dazu brauchen wir eine Vector, welcher Information über die Konzentration des BSA in den angesetzten Standards (in $\frac{\mu g}{ml}$) bereithält:
 ```{r}
 conc <- seq(
@@ -54,40 +81,54 @@ Als Nächstes berechnen wir das arithmetische Mittel der technischen Replikate:
 Std.mean <- rowMeans(Std)
 ```
 
+## Errechnen eines Linearen Modell
+
 Damit haben wir nun alles um ein lineares Modell vom Typ $y = m \cdot x + b$ zu errechnen und zu plotten, dies geht recht leicht:
 ```{r message=FALSE, warning=FALSE, paged.print=TRUE}
 # Berechnen des Modells
 LinMod(abs = Std.mean, conc = conc) %>%
+    # Überführen des Modells in eine schöne Tabelle
   pander::pander()
+
 # Plotten des Modells
 plot_regression(abs = Std.mean, conc = conc)
 ```
+
+## Konzentrationsbestimmung der Proben
 
 Nach dem selben Verfahren wie die Standardreihe wurde auch mit Proben unbekannter Konzentration verfahren, für diese wurden folgende Absorptionswerte gemessen:
 ```{r message=FALSE, warning=FALSE}
 # die gmessenen Werte:
 mes.1 <- c(0.185, 0.245, 0.399, 0.429, 0.448, 0.431)
+
 # defineiren des Verdünnunsfaktor
 FV <- c(80, 80, 40, 40, 20, 20)
+
 # Hieraus berechnen wir dann direkt die Konzentrationen:
 conc.mes <- 
     conc_eval(abs_P = mes.1, abs_std = Std.mean, conc_std = conc)
+
 conc.rea <- 
     conc.mes * FV
+
+# Erzeugen einer Ausgabe
 print(conc.rea)
 ```
-Bei genauerer Betrachtung fällt auf, dass die Werte, welche zu den höheren Konzentrationen gehören viel geringere Konzentrationen Aufweisen, als jene der schwachen Verdünnungen.
+Bei genauerer Betrachtung fällt auf, dass die Werte, welche zu den geringeren Verdünnungen gehören viel geringere Konzentrationen aufweisen, als jene der schwachen Verdünnungen.
 Dies lässt sich damit erklären, dass der Bradford Assay nur innerhalb eines bestimmten linearen Bereichs zuverlässige Ergebnisse liefert.
-Dieser liegt in der Regel unterhalb einer Konzentration von $120 \frac{\mu g}{ml}$, ein Vergleich der Messwerte mit den theoretischen Konzentrationen ist dabei Hilfreich.
+Dieser liegt in der Regel unterhalb einer Konzentration von $120 \frac{\mu g}{ml}$, ein Vergleich der Messwerte mit den theoretischen Konzentrationen ist dabei hilfreich.
  
 # Auswertung einer 96-Well-Platte
 
-Das Paket Biotech enthält Datensätze welche zum Testen und experimentieren angefügt wurden, zwei davon sind ELISA-Assays wie sie im Immunochemischen Praktikum zum Nachweis vom Humanserumalbumin in Urin entstehen.
-Um uns zu verdeutlichen, wie groß die Absorptionen in welchen Wells waren, können wir durch das anfertigen einer Heatmap schnell die gemessenen Daten visualisiert vor Augen führen.
-Eine Heatmap ordnet einem Wert eine Farbintensität zu, hierbei kann die Räumliche Anordnung leicht berücksichtigt werden.
+Das Paket Biotech enthält Datensätze welche zum Testen und Experimentieren angefügt wurden, zwei davon sind ELISA-Assays wie sie im Immunochemischen Praktikum zum Nachweis vom Humanserumalbumin in Urin entstehen.
+Um uns zu verdeutlichen wie groß die Absorptionen in welchen Wells waren können wir durch das anfertigen einer Heatmap schnell die gemessenen Daten visualisiert vor Augen führen.
+Eine Heatmap ordnet einem Wert eine Farbintensität zu, hierbei kann die räumliche Anordnung leicht berücksichtigt werden.
 ```{r}
 str(HSA1)
 ```
+
+## Rohdatenaufarbeitung und Plotten
+
 Um nur die Informationen zu bekommen, die wir benötigen werden wir ein paar Transformationsschritte durchführen:
 ```{r}
 daten <- HSA1[,2:13] %>% 
@@ -98,17 +139,24 @@ Nun liegen die Messwerte als Vektor in lineare Form vor, diese können wir in ei
 ```{r}
 # y wird durchnummeriert, als charcter
 y  <- paste0(seq(1,12))
+
 # x bekommt die erstest acht Buchstaben des Alphabets
 x <- LETTERS[1:8]
+
 # erstellen des Grid
 grid.1 <- expand.grid(X = x, Y = y)
+
 # füllen des Grid mit den Daten als Abs
 grid.1$Abs <- daten
+
 # plotten des Grid
 ggplot( data = grid.1, mapping = aes( X, Y, fill = Abs ) )+
     geom_tile()
 ```
-Um in Zukunft schneller das selbe machen zu können, schreiben wir eine Funktion, welche diese Aufgabe übernimmt.
+
+## Definition einer Funktion
+
+Um in Zukunft schneller das selbe machen zu können schreiben wir eine Funktion welche diese Aufgabe übernimmt.
 R ist eine funktionale Programmsprache, das bedeutet, dass es für viele Probleme bereits Funktionen gibt.
 Dies erleichtert gerade nicht-Programmierern das schreiben von Skripten.
 Sollte nun jedoch, wie in unserem Fall, keine Funktion für das Problem zur Hand sein wird diese einfach geschrieben:
@@ -143,9 +191,19 @@ Wir können diese Funktion nun testen, dazu verwenden wir den zweiten HSA-Assay 
 vis96(HSA.assay = HSA2)
 ```
 
-Die Vorteil des Verwendens einer Funktion werden in diesem Beispiel klar:
+Die Vorteil des Verwendens einer Funktion werden im Beispiel klar:
 
 * die Funktion bedeutet weniger Tippen
 * sie macht den Code übersichtlicher
 
 Ein weiterer Vorteil ist, dass die Funktion leicht geändert werden kann, wenn nun zum Beispiel eine Änderung in der Methode (Format der Ausgabe) des Assays eingeführt wird kann die Funktion einfach geändert werden.
+
+## Vergleich mit den zu erwartenden Werten 
+
+Das Orginalpipettierschema, in hellgrün die Standardreihe, in gelb und hellgelb die Studentenurinproben und die tieferen grüntöne markieren die Auftragungsstellen des Patientenurin, gibt uns eine Idee, welche Messwerte wo zu erwarten sind:
+![hellgrün die Standardreihe, in gelb und hellgelb die Studentenurinproben und die tieferen grüntöne markieren die Auftragungsstellen des Patientenurin](pipettierschema.jpg)
+
+So wird klar, dass beim ersten Test (HSA1) dieses Schema richtig angewandt wurde, abhängig von der Konzentration variiert auch der die Intensität der jeweils gemessenen Zelle.
+Besonders klar deutlich wird das anhand der Standardreihen sowie den Patientenproben.
+Ins Auge fallen die Werte F5 und F6.
+Für den 2. Assay können wir einen ähnlichen Zusammenhang feststellen, auch auf diesem ist vor allem die Standardreihe sichtbar.
