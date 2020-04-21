@@ -25,14 +25,14 @@ library(tidyverse)
 
 Ihr habt im Labor den Bradfor-Assy durchgeführt und mit Rinderserumalbumin eine Standardreihe aufgenommen, dazu wurden zu jeder Verdünnung vier technische Replikate angefertigt und deren Absorption gemäß der Vorschrift gemessen.
 Die Ergebnisse der Messung lauten:
-````{r}
+```{r}
 Std <- tibble(
   mes.1 = c(0.031,	0.092,	0.191,	0.278,	0.332, 0.363),
   mes.2 = c(0.04, 0.103, 0.201, 0.279, 0.348, 0.36),
   mes.3 = c(0.009, 0.077, 0.166, 0.205, 0.25, 0.397), 
   mes.4 = c(0.007, 0.084, 0.166, 0.205, 0.353, 0.371),
   )
-````
+```
 Diese fassen wir gleich als tibble zusammen.
 Zusätzlich dazu brauchen wir eine Vector, welcher Information über die Konzentration des BSA in den angesetzten Standards (in $\frac{\mu g}{ml}$) bereithält:
 ```{r}
@@ -47,11 +47,13 @@ conc <- seq(
                 length(Std$mes.1)
             )
 ```
+
 Die Länge (also Anzahl der einzelnen Werte muss der Anzahl der Standards entsprechen) wird über das Argument length.out gesteuert.
 Als Nächstes berechnen wir das arithmetische Mittel der technischen Replikate:
 ```{r}
 Std.mean <- rowMeans(Std)
 ```
+
 Damit haben wir nun alles um ein lineares Modell vom Typ $y = m \cdot x + b$ zu errechnen und zu plotten, dies geht recht leicht:
 ```{r message=FALSE, warning=FALSE, paged.print=TRUE}
 # Berechnen des Modells
@@ -60,6 +62,7 @@ LinMod(abs = Std.mean, conc = conc) %>%
 # Plotten des Modells
 plot_regression(abs = Std.mean, conc = conc)
 ```
+
 Nach dem selben Verfahren wie die Standardreihe wurde auch mit Proben unbekannter Konzentration verfahren, für diese wurden folgende Absorptionswerte gemessen:
 ```{r message=FALSE, warning=FALSE}
 # die gmessenen Werte:
@@ -76,10 +79,73 @@ print(conc.rea)
 Bei genauerer Betrachtung fällt auf, dass die Werte, welche zu den höheren Konzentrationen gehören viel geringere Konzentrationen Aufweisen, als jene der schwachen Verdünnungen.
 Dies lässt sich damit erklären, dass der Bradford Assay nur innerhalb eines bestimmten linearen Bereichs zuverlässige Ergebnisse liefert.
 Dieser liegt in der Regel unterhalb einer Konzentration von $120 \frac{\mu g}{ml}$, ein Vergleich der Messwerte mit den theoretischen Konzentrationen ist dabei Hilfreich.
+ 
+# Auswertung einer 96-Well-Platte
 
+Das Paket Biotech enthält Datensätze welche zum Testen und experimentieren angefügt wurden, zwei davon sind ELISA-Assays wie sie im Immunochemischen Praktikum zum Nachweis vom Humanserumalbumin in Urin entstehen.
+Um uns zu verdeutlichen, wie groß die Absorptionen in welchen Wells waren, können wir durch das anfertigen einer Heatmap schnell die gemessenen Daten visualisiert vor Augen führen.
+Eine Heatmap ordnet einem Wert eine Farbintensität zu, hierbei kann die Räumliche Anordnung leicht berücksichtigt werden.
+```{r}
+str(HSA1)
+```
+Um nur die Informationen zu bekommen, die wir benötigen werden wir ein paar Transformationsschritte durchführen:
+```{r}
+daten <- HSA1[,2:13] %>% 
+    as.matrix() %>% 
+    as.vector()
+```
+Nun liegen die Messwerte als Vektor in lineare Form vor, diese können wir in einem Grid "fangen", dazu müssen wir dieses Grid erst mal "aufspannen":
+```{r}
+# y wird durchnummeriert, als charcter
+y  <- paste0(seq(1,12))
+# x bekommt die erstest acht Buchstaben des Alphabets
+x <- LETTERS[1:8]
+# erstellen des Grid
+grid.1 <- expand.grid(X = x, Y = y)
+# füllen des Grid mit den Daten als Abs
+grid.1$Abs <- daten
+# plotten des Grid
+ggplot( data = grid.1, mapping = aes( X, Y, fill = Abs ) )+
+    geom_tile()
+```
+Um in Zukunft schneller das selbe machen zu können, schreiben wir eine Funktion, welche diese Aufgabe übernimmt.
+R ist eine funktionale Programmsprache, das bedeutet, dass es für viele Probleme bereits Funktionen gibt.
+Dies erleichtert gerade nicht-Programmierern das schreiben von Skripten.
+Sollte nun jedoch, wie in unserem Fall, keine Funktion für das Problem zur Hand sein wird diese einfach geschrieben:
 
+```{r}
+    # Name:
+vis96 <- 
+    # die function-Funktion
+    function(
+             # Die Argumente der Funktion vis96
+             HSA.assay) {
+    # die eigentliche Funktion
+    daten <- HSA.assay[,2:13] %>% 
+    as.matrix() %>% 
+    as.vector()
+    y  <- paste0(seq(1,12))
+    # x bekommt die erstest acht Buchstaben des Alphabets
+    x <- LETTERS[1:8]
+    # erstellen des Grid
+    grid.1 <- expand.grid(X = x, Y = y)
+    # füllen des Grid mit den Daten als Abs
+    grid.1$Abs <- daten
+    # plotten des Grid
+    vis96 <- ggplot( data = grid.1, mapping = aes( X, Y, fill = Abs ) )+
+        geom_tile()
+    # Definition der Ausgabe
+    return(vis96)
+}
+```
+Wir können diese Funktion nun testen, dazu verwenden wir den zweiten HSA-Assay (HSA2):
+```{r}
+vis96(HSA.assay = HSA2)
+```
 
+Die Vorteil des Verwendens einer Funktion werden in diesem Beispiel klar:
 
+* die Funktion bedeutet weniger Tippen
+* sie macht den Code übersichtlicher
 
-
-
+Ein weiterer Vorteil ist, dass die Funktion leicht geändert werden kann, wenn nun zum Beispiel eine Änderung in der Methode (Format der Ausgabe) des Assays eingeführt wird kann die Funktion einfach geändert werden.
