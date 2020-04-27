@@ -207,3 +207,77 @@ So wird klar, dass beim ersten Test (HSA1) dieses Schema richtig angewandt wurde
 Besonders klar deutlich wird das anhand der Standardreihen sowie den Patientenproben.
 Ins Auge fallen die Werte F5 und F6.
 Für den 2. Assay können wir einen ähnlichen Zusammenhang feststellen, auch auf diesem ist vor allem die Standardreihe sichtbar.
+
+# Konzentrationsbestimmung für den HSA-Assay
+
+# Rohdatenverarbeitung
+
+Vor Beginn der Berechnung der HSA-Konzentration in den Proben müssen wir den Mittelwert der Standardreihen berechnen, die Herausforderung besteht hierbei darin die passenden Spalten zu selektieren.
+Anhand des Pipettierschemas kann nachvollzogen werden, dass die entsprechenden Auftragungen in den Spalten 2 bis 4 liegen.
+```{r}
+# wo liegen die Werte der Standards
+stdr <- HSA1[3:5]  %>% 
+    rowMeans()
+```
+Aus dieser Standardreihe können wir dann wieder, wie bereits vorher geschehen, eine Regression errechnen:
+```{r}
+# Zuordnung der Konzentrationen
+conc <- c(0, 5, 10, 15, 20, 30, 40, 50)
+
+# welche Konentrationen gibt das Modell für die Standards aus
+conc_eval(abs_P = stdr, abs_std = stdr, conc_std = conc)
+
+# Definition einer Funktion
+HSA.conc.eval <- function(HSA,
+         mes) {
+  stdr <- HSA[3:5]  %>%
+    rowMeans()
+  conc <- c(0, 5, 10, 15, 20, 30, 40, 50)
+  eval <- conc_eval(abs_P = mes,
+            abs_std = stdr,
+            conc_std = conc)
+  return(eval)
+}
+
+# Testen der Funktion
+HSA.conc.eval(HSA1, HSA1[3:5])
+```
+Wenn wir uns dieses Ergebniss ansehe, fällt auf, dass die Leerwerte negativ sind, das kann aber (real) nicht sein.
+
+## Berücksichtigung des Verdünnungsfaktor
+
+Die Verdünnungsfaktoren sind Bekannt, sie müssen lediglich miteinberechnet werden.
+Man könnte die Funktion zusätzlich erweitern:
+```{r}
+HSA.conc.eval <- function(HSA,
+         mes,
+         FV = 1) {
+  stdr <- HSA[3:5]  %>%
+    rowMeans()
+  conc <- c(0, 5, 10, 15, 20, 30, 40, 50)
+  eval <- conc_eval(abs_P = mes,
+            abs_std = stdr,
+            conc_std = conc)
+  return(eval * FV)
+}
+
+# Testen mit dem zweiten Datensatz
+HSA.conc.eval(HSA2, HSA2[3:5])
+```
+Da nach dem Auftragsschema die Verdünnungsfaktoren auch in den Spalten variiren können müssen wir uns diese noch ein mal genauer ansehen.
+```{r}
+dat.1 <- tibble(
+ "FV1000" = c(rowMeans(HSA2[,6:7]),
+              rowMeans(HSA2[1:4, 8:9])
+              ),
+ "FV5000" = c(rowMeans(HSA2[5:8, 8:9]),
+              rowMeans(HSA2[,10:11])
+              )
+) 
+conc.1 <- tibble(
+  "aus FV1000" = HSA.conc.eval(HSA2, dat.1$"FV1000", 1000),
+  "aus FV5000" =  HSA.conc.eval(HSA2, dat.1$FV5000, 5000)
+)
+conc.1
+```
+
