@@ -98,10 +98,10 @@ plot_regression(abs = Std.mean, conc = conc)
 
 Nach dem selben Verfahren wie die Standardreihe wurde auch mit Proben unbekannter Konzentration verfahren, für diese wurden folgende Absorptionswerte gemessen:
 ```{r message=FALSE, warning=FALSE}
-# die gmessenen Werte:
+# die gemessenen Werte:
 mes.1 <- c(0.185, 0.245, 0.399, 0.429, 0.448, 0.431)
 
-# defineiren des Verdünnunsfaktor
+# definieren des Verdünnungsfaktor
 FV <- c(80, 80, 40, 40, 20, 20)
 
 # Hieraus berechnen wir dann direkt die Konzentrationen:
@@ -120,7 +120,7 @@ Dieser liegt in der Regel unterhalb einer Konzentration von $120 \frac{\mu g}{ml
  
 # Auswertung einer 96-Well-Platte
 
-Das Paket Biotech enthält Datensätze welche zum Testen und Experimentieren angefügt wurden, zwei davon sind ELISA-Assays wie sie im Immunochemischen Praktikum zum Nachweis vom Humanserumalbumin in Urin entstehen.
+Das Paket Biotech enthält Datensätze welche zum Testen und Experimentieren angefügt wurden, zwei davon sind ELISA-Assays wie sie im Immunologischen Praktikum zum Nachweis vom Humanserumalbumin in Urin entstehen.
 Um uns zu verdeutlichen wie groß die Absorptionen in welchen Wells waren können wir durch das anfertigen einer Heatmap schnell die gemessenen Daten visualisiert vor Augen führen.
 Eine Heatmap ordnet einem Wert eine Farbintensität zu, hierbei kann die räumliche Anordnung leicht berücksichtigt werden.
 ```{r}
@@ -200,8 +200,8 @@ Ein weiterer Vorteil ist, dass die Funktion leicht geändert werden kann, wenn n
 
 ## Vergleich mit den zu erwartenden Werten 
 
-Das Orginalpipettierschema, in hellgrün die Standardreihe, in gelb und hellgelb die Studentenurinproben und die tieferen grüntöne markieren die Auftragungsstellen des Patientenurin, gibt uns eine Idee, welche Messwerte wo zu erwarten sind:
-![hellgrün die Standardreihe, in gelb und hellgelb die Studentenurinproben und die tieferen grüntöne markieren die Auftragungsstellen des Patientenurin](pipettierschema.jpg)
+Das Originalpipettierschema, in hellgrün die Standardreihe, in gelb und hellgelb die Studentenurinproben und die tieferen grün töne markieren die Auftragungspunkten des Patientenurin, gibt uns eine Idee, welche Messwerte wo zu erwarten sind:
+![hellgrün die Standardreihe, in gelb und hellgelb die Studentenurinproben und die tieferen Grüntöne markieren die Auftragungspunkten des Patientenurin](pipettierschema.jpg)
 
 So wird klar, dass beim ersten Test (HSA1) dieses Schema richtig angewandt wurde, abhängig von der Konzentration variiert auch der die Intensität der jeweils gemessenen Zelle.
 Besonders klar deutlich wird das anhand der Standardreihen sowie den Patientenproben.
@@ -224,7 +224,7 @@ Aus dieser Standardreihe können wir dann wieder, wie bereits vorher geschehen, 
 # Zuordnung der Konzentrationen
 conc <- c(0, 5, 10, 15, 20, 30, 40, 50)
 
-# welche Konentrationen gibt das Modell für die Standards aus
+# welche Konzentrationen gibt das Modell für die Standards aus
 conc_eval(abs_P = stdr, abs_std = stdr, conc_std = conc)
 
 # Definition einer Funktion
@@ -242,11 +242,11 @@ HSA.conc.eval <- function(HSA,
 # Testen der Funktion
 HSA.conc.eval(HSA1, HSA1[3:5])
 ```
-Wenn wir uns dieses Ergebniss ansehe, fällt auf, dass die Leerwerte negativ sind, das kann aber (real) nicht sein.
+Wenn wir uns dieses Ergebnis ansehe, fällt auf, dass die Leerwerte negativ sind, das kann aber (real) nicht sein.
 
 ## Berücksichtigung des Verdünnungsfaktor
 
-Die Verdünnungsfaktoren sind Bekannt, sie müssen lediglich miteinberechnet werden.
+Die Verdünnungsfaktoren sind Bekannt, sie müssen lediglich mit-einberechnet werden.
 Man könnte die Funktion zusätzlich erweitern:
 ```{r}
 HSA.conc.eval <- function(HSA,
@@ -264,7 +264,7 @@ HSA.conc.eval <- function(HSA,
 # Testen mit dem zweiten Datensatz
 HSA.conc.eval(HSA2, HSA2[3:5])
 ```
-Da nach dem Auftragsschema die Verdünnungsfaktoren auch in den Spalten variiren können müssen wir uns diese noch ein mal genauer ansehen.
+Da nach dem Auftragsschema die Verdünnungsfaktoren auch in den Spalten variieren können müssen wir uns diese noch ein mal genauer ansehen.
 ```{r}
 dat.1 <- tibble(
  "FV1000" = c(rowMeans(HSA2[,6:7]),

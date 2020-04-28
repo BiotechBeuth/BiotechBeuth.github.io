@@ -381,7 +381,9 @@ summary {
 <li><a href="#vergleich-mit-den-zu-erwartenden-werten">Vergleich mit den zu erwartenden Werten</a></li>
 </ul></li>
 <li><a href="#konzentrationsbestimmung-für-den-hsa-assay">Konzentrationsbestimmung für den HSA-Assay</a></li>
-<li><a href="#rohdatenverarbeitung-1">Rohdatenverarbeitung</a></li>
+<li><a href="#rohdatenverarbeitung-1">Rohdatenverarbeitung</a><ul>
+<li><a href="#berücksichtigung-des-verdünnungsfaktor">Berücksichtigung des Verdünnungsfaktor</a></li>
+</ul></li>
 </ul>
 </div>
 
@@ -683,7 +685,189 @@ vis96 &lt;-
 </div>
 <div id="rohdatenverarbeitung-1" class="section level1">
 <h1>Rohdatenverarbeitung</h1>
-<p>vor Beginn</p>
+<p>Vor Beginn der Berechnung der HSA-Konzentration in den Proben müssen wir den Mittelwert der Standardreihen berechnen, die Herausforderung besteht hierbei darin die passenden Spalten zu selektieren. Anhand des Pipettierschemas kann nachvollzogen werden, dass die entsprechenden Auftragungen in den Spalten 2 bis 4 liegen.</p>
+<pre class="r"><code># wo liegen die Werte der Standards
+stdr &lt;- HSA1[3:5]  %&gt;% 
+    rowMeans()</code></pre>
+<p>Aus dieser Standardreihe können wir dann wieder, wie bereits vorher geschehen, eine Regression errechnen:</p>
+<pre class="r"><code># Zuordnung der Konzentrationen
+conc &lt;- c(0, 5, 10, 15, 20, 30, 40, 50)
+
+# welche Konentrationen gibt das Modell für die Standards aus
+conc_eval(abs_P = stdr, abs_std = stdr, conc_std = conc)</code></pre>
+<pre><code>## 
+## Call:
+## stats::lm(formula = conc_std ~ abs_std)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -8.3909 -2.3392 -0.0641  3.1028  7.7572 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   1.6994     3.0164   0.563 0.593584    
+## abs_std       0.9200     0.1107   8.308 0.000165 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 5.338 on 6 degrees of freedom
+## Multiple R-squared:   0.92,  Adjusted R-squared:  0.9067 
+## F-statistic: 69.03 on 1 and 6 DF,  p-value: 0.0001649</code></pre>
+<pre><code>## [1] -3.241947  1.943520 11.910019 18.626572 28.390852 31.424134 38.704011
+## [8] 42.242840</code></pre>
+<pre class="r"><code># Definition einer Funktion
+HSA.conc.eval &lt;- function(HSA,
+         mes) {
+  stdr &lt;- HSA[3:5]  %&gt;%
+    rowMeans()
+  conc &lt;- c(0, 5, 10, 15, 20, 30, 40, 50)
+  eval &lt;- conc_eval(abs_P = mes,
+            abs_std = stdr,
+            conc_std = conc)
+  return(eval)
+}
+
+# Testen der Funktion
+HSA.conc.eval(HSA1, HSA1[3:5])</code></pre>
+<pre><code>## 
+## Call:
+## stats::lm(formula = conc_std ~ abs_std)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -8.3909 -2.3392 -0.0641  3.1028  7.7572 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)   1.6994     3.0164   0.563 0.593584    
+## abs_std       0.9200     0.1107   8.308 0.000165 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 5.338 on 6 degrees of freedom
+## Multiple R-squared:   0.92,  Adjusted R-squared:  0.9067 
+## F-statistic: 69.03 on 1 and 6 DF,  p-value: 0.0001649</code></pre>
+<pre><code>##           s2        s3        s4
+## 1 -1.9853020 -2.981952 -4.758589
+## 2  0.3546584  1.871299  3.604604
+## 3 13.6144345 11.144476 10.971146
+## 4 18.9443445 19.464336 17.471036
+## 5 27.5675322 28.434184 29.170838
+## 6 32.1607880 32.724112 29.387501
+## 7 39.7006606 41.173969 35.237403
+## 8 40.8273083 39.354000 46.547212</code></pre>
+<p>Wenn wir uns dieses Ergebniss ansehe, fällt auf, dass die Leerwerte negativ sind, das kann aber (real) nicht sein.</p>
+<div id="berücksichtigung-des-verdünnungsfaktor" class="section level2">
+<h2>Berücksichtigung des Verdünnungsfaktor</h2>
+<p>Die Verdünnungsfaktoren sind Bekannt, sie müssen lediglich miteinberechnet werden. Man könnte die Funktion zusätzlich erweitern:</p>
+<pre class="r"><code>HSA.conc.eval &lt;- function(HSA,
+         mes,
+         FV = 1) {
+  stdr &lt;- HSA[3:5]  %&gt;%
+    rowMeans()
+  conc &lt;- c(0, 5, 10, 15, 20, 30, 40, 50)
+  eval &lt;- conc_eval(abs_P = mes,
+            abs_std = stdr,
+            conc_std = conc)
+  return(eval * FV)
+}
+
+# Testen mit dem zweiten Datensatz
+HSA.conc.eval(HSA2, HSA2[3:5])</code></pre>
+<pre><code>## 
+## Call:
+## stats::lm(formula = conc_std ~ abs_std)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -4.455 -3.896 -0.661  1.751  6.856 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  -39.560      6.824  -5.797  0.00115 ** 
+## abs_std       37.805      4.106   9.207 9.26e-05 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 4.853 on 6 degrees of freedom
+## Multiple R-squared:  0.9339, Adjusted R-squared:  0.9229 
+## F-statistic: 84.76 on 1 and 6 DF,  p-value: 9.261e-05</code></pre>
+<pre><code>##         s2       s3        s4
+## 1 -6.63252 -7.69105 -5.384965
+## 2  5.99424  5.99424  5.275952
+## 3 13.59298 15.59663 12.496644
+## 4 18.99905 18.58320 19.112461
+## 5 25.38804 23.68683 24.291701
+## 6 31.09654 31.13435 29.470941
+## 7 38.88430 41.15258 39.526983
+## 8 44.63061 43.38306 41.417216</code></pre>
+<p>Da nach dem Auftragsschema die Verdünnungsfaktoren auch in den Spalten variiren können müssen wir uns diese noch ein mal genauer ansehen.</p>
+<pre class="r"><code>dat.1 &lt;- tibble(
+ &quot;FV1000&quot; = c(rowMeans(HSA2[,6:7]),
+              rowMeans(HSA2[1:4, 8:9])
+              ),
+ &quot;FV5000&quot; = c(rowMeans(HSA2[5:8, 8:9]),
+              rowMeans(HSA2[,10:11])
+              )
+) 
+conc.1 &lt;- tibble(
+  &quot;aus FV1000&quot; = HSA.conc.eval(HSA2, dat.1$&quot;FV1000&quot;, 1000),
+  &quot;aus FV5000&quot; =  HSA.conc.eval(HSA2, dat.1$FV5000, 5000)
+)</code></pre>
+<pre><code>## 
+## Call:
+## stats::lm(formula = conc_std ~ abs_std)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -4.455 -3.896 -0.661  1.751  6.856 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  -39.560      6.824  -5.797  0.00115 ** 
+## abs_std       37.805      4.106   9.207 9.26e-05 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 4.853 on 6 degrees of freedom
+## Multiple R-squared:  0.9339, Adjusted R-squared:  0.9229 
+## F-statistic: 84.76 on 1 and 6 DF,  p-value: 9.261e-05
+## 
+## 
+## Call:
+## stats::lm(formula = conc_std ~ abs_std)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -4.455 -3.896 -0.661  1.751  6.856 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(&gt;|t|)    
+## (Intercept)  -39.560      6.824  -5.797  0.00115 ** 
+## abs_std       37.805      4.106   9.207 9.26e-05 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 4.853 on 6 degrees of freedom
+## Multiple R-squared:  0.9339, Adjusted R-squared:  0.9229 
+## F-statistic: 84.76 on 1 and 6 DF,  p-value: 9.261e-05</code></pre>
+<pre class="r"><code>conc.1</code></pre>
+<pre><code>## # A tibble: 12 x 2
+##    `aus FV1000` `aus FV5000`
+##           &lt;dbl&gt;        &lt;dbl&gt;
+##  1      -10640.      -97431.
+##  2      -12719.      -65202.
+##  3       -1945.      -79662.
+##  4       24802.      -59909.
+##  5       -5839.      -95918.
+##  6      -15687.     -135330.
+##  7      -16235.      -91854.
+##  8       -4875.      -52727.
+##  9       -2531.      -89870.
+## 10      -20337.      -93650.
+## 11        2743.      -81175.
+## 12      -19467.      -60855.</code></pre>
+</div>
 </div>
 
 
