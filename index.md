@@ -7,19 +7,40 @@ output:
     toc: yes
 ---
 
-```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE)
-```
+
 
 # Laden benötigter Pakete
 
 In diesem Intro werden wir mit dem Paket Biotech arbeiten, dieses installieren wir mit:
-```{r , eval = T}
+
+```r
 # devtools::install_github("https://github.com/Utzi1/Biotech")
 devtools::load_all("~/Bachelor/Biotech")
 ```
+
+```
+## Loading Biotech
+```
+
+```
+## ── Attaching packages ─────────────────────────────────────── tidyverse 1.3.0 ──
+```
+
+```
+## ✔ ggplot2 3.3.2     ✔ purrr   0.3.4
+## ✔ tibble  3.0.1     ✔ dplyr   1.0.0
+## ✔ tidyr   1.1.0     ✔ stringr 1.4.0
+## ✔ readr   1.3.1     ✔ forcats 0.5.0
+```
+
+```
+## ── Conflicts ────────────────────────────────────────── tidyverse_conflicts() ──
+## ✖ dplyr::filter() masks stats::filter()
+## ✖ dplyr::lag()    masks stats::lag()
+```
 Installieren müssen wir es nur ein Mal, danach jedoch müssen wir in jedem Skript, in welchem es zum Einsatz kommt, auf seine Existenz verweisen, wir müssen es "laden":
-```{r message=FALSE, warning=FALSE, paged.print=FALSE}
+
+```r
 library(Biotech)
 
 # Wir laden auch tidverse, dieses Paket enthält eine Menge
@@ -32,29 +53,26 @@ library(tidyverse)
 
 Ihr habt im Labor den Bradford-Assay durchgeführt und mit Rinderserumalbumin eine Standardreihe aufgenommen, dazu wurden zu jeder Verdünnung vier technische Replikate angefertigt und deren Absorption gemäß der Vorschrift gemessen.
 Die Ergebnisse der Messung lauten:
-```{r echo=FALSE}
-Std <- tibble(
-  mes.1 = c(0.031,	0.092,	0.191,	0.278,	0.332, 0.363),
-  mes.2 = c(0.04, 0.103, 0.201, 0.279, 0.348, 0.36),
-  mes.3 = c(0.009, 0.077, 0.166, 0.205, 0.25, 0.397), 
-  mes.4 = c(0.007, 0.084, 0.166, 0.205, 0.353, 0.371),
-  )
-conc <- seq(
-            # die geringste Konzentration
-            from = 0,
-            # die Höchste Konzentration
-            to = 100,
-            # die Länge
-            length.out = 
-                # diese muss der Anzahl der Messungen entsprechen
-                length(Std$mes.1)
-            )
-Std$"conc" <- conc
-pander::pander(Std)
-```
+
+--------------------------------------
+ mes.1   mes.2   mes.3   mes.4   conc 
+------- ------- ------- ------- ------
+ 0.031   0.04    0.009   0.007    0   
+
+ 0.092   0.103   0.077   0.084    20  
+
+ 0.191   0.201   0.166   0.166    40  
+
+ 0.278   0.279   0.205   0.205    60  
+
+ 0.332   0.348   0.25    0.353    80  
+
+ 0.363   0.36    0.397   0.371   100  
+--------------------------------------
 
 Diese fassen wir gleich als tibble zusammen:
-```{r}
+
+```r
 Std <- tibble(
   mes.1 = c(0.031,	0.092,	0.191,	0.278,	0.332, 0.363),
   mes.2 = c(0.04, 0.103, 0.201, 0.279, 0.348, 0.36),
@@ -63,7 +81,8 @@ Std <- tibble(
   )
 ```
 Zusätzlich dazu brauchen wir eine Vector, welcher Information über die Konzentration des BSA in den angesetzten Standards (in $\frac{\mu g}{ml}$) bereithält:
-```{r}
+
+```r
 conc <- seq(
             # die geringste Konzentration
             from = 0,
@@ -78,27 +97,52 @@ conc <- seq(
 
 Die Länge (also Anzahl der einzelnen Werte muss der Anzahl der Standards entsprechen) wird über das Argument length.out gesteuert.
 Als Nächstes berechnen wir das arithmetische Mittel der technischen Replikate:
-```{r}
+
+```r
 Std.mean <- rowMeans(Std)
 ```
 
 ## Errechnen eines Linearen Modell
 
 Damit haben wir nun alles um ein lineares Modell vom Typ $y = m \cdot x + b$ zu errechnen und zu plotten, dies geht recht leicht:
-```{r message=FALSE, warning=FALSE, paged.print=TRUE}
+
+```r
 # Berechnen des Modells
 LinMod(abs = Std.mean, conc = conc) %>%
     # Überführen des Modells in eine schöne Tabelle
   pander::pander()
+```
 
+
+---------------------------------------------------------------
+     &nbsp;        Estimate   Std. Error   t value   Pr(>|t|)  
+----------------- ---------- ------------ --------- -----------
+ **(Intercept)**    -6.74       2.277       -2.96     0.04157  
+
+     **abs**        277.5       9.547       29.06    8.345e-06 
+---------------------------------------------------------------
+
+
+--------------------------------------------------------------
+ Observations   Residual Std. Error   $R^2$    Adjusted $R^2$ 
+-------------- --------------------- -------- ----------------
+      6                2.872          0.9953       0.9941     
+--------------------------------------------------------------
+
+Table: Fitting linear model: conc ~ abs
+
+```r
 # Plotten des Modells
 plot_regression(abs = Std.mean, conc = conc)
 ```
 
+![plot of chunk unnamed-chunk-7](figure/unnamed-chunk-7-1.png)
+
 ## Konzentrationsbestimmung der Proben
 
 Nach dem selben Verfahren wie die Standardreihe wurde auch mit Proben unbekannter Konzentration verfahren, für diese wurden folgende Absorptionswerte gemessen:
-```{r message=FALSE, warning=FALSE}
+
+```r
 # die gemessenen Werte:
 mes.1 <- c(0.185, 0.245, 0.399, 0.429, 0.448, 0.431)
 
@@ -108,12 +152,39 @@ FV <- c(80, 80, 40, 40, 20, 20)
 # Hieraus berechnen wir dann direkt die Konzentrationen:
 conc.mes <- 
     conc_eval(abs_P = mes.1, abs_std = Std.mean, conc_std = conc)
+```
 
+```
+## 
+## Call:
+## stats::lm(formula = conc_std ~ abs_std)
+## 
+## Residuals:
+##       1       2       3       4       5       6 
+##  0.7057  2.0466 -3.4797 -0.3354 -2.2546  3.3175 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)   -6.740      2.277   -2.96   0.0416 *  
+## abs_std      277.459      9.547   29.06 8.35e-06 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 2.872 on 4 degrees of freedom
+## Multiple R-squared:  0.9953,	Adjusted R-squared:  0.9941 
+## F-statistic: 844.6 on 1 and 4 DF,  p-value: 8.345e-06
+```
+
+```r
 conc.rea <- 
     conc.mes * FV
 
 # Erzeugen einer Ausgabe
 print(conc.rea)
+```
+
+```
+## [1] 3567.163 4898.968 4158.634 4491.585 2351.227 2256.891
 ```
 Bei genauerer Betrachtung fällt auf, dass die Werte, welche zu den geringeren Verdünnungen gehören viel geringere Konzentrationen aufweisen, als jene der schwachen Verdünnungen.
 Dies lässt sich damit erklären, dass der Bradford Assay nur innerhalb eines bestimmten linearen Bereichs zuverlässige Ergebnisse liefert.
@@ -664,25 +735,68 @@ dazu später mehr.
 Zu Beginn wollen wir uns den verschiedenen Operatoren widmen.
 Operatoren gehören zu den reservierten Begri
 
-```{r}
+
+```r
 x = 1
 y = 2
 
 x != y
+```
+
+```
+## [1] TRUE
+```
+
+```r
 # [1] TRUE
 x == y
+```
+
+```
+## [1] FALSE
+```
+
+```r
 # [1] FALSE
 x < y
+```
+
+```
+## [1] TRUE
+```
+
+```r
 # [1] TRUE
 x > y
+```
+
+```
+## [1] FALSE
+```
+
+```r
 # [1] FALSE
 
 z = 1
 
 x >= z
+```
+
+```
+## [1] TRUE
+```
+
+```r
 # [1] TRUE
 
 x <= z
+```
+
+```
+## [1] TRUE
+```
+
+```r
 # [1] TRUE
 
 vec1 <- trunc(runif(n = 10, min = 3, max = 7))
@@ -694,9 +808,34 @@ inf2 <- c(vec2 == vec3)
 inf3 <- c(vec1 == vec3)
 
 inf1 &  inf2
+```
+
+```
+##  [1] FALSE FALSE  TRUE FALSE FALSE FALSE FALSE FALSE FALSE FALSE
+```
+
+```r
 inf1 && inf2
+```
+
+```
+## [1] FALSE
+```
+
+```r
 inf1 |  inf2
+```
+
+```
+##  [1] FALSE  TRUE  TRUE  TRUE  TRUE FALSE FALSE  TRUE FALSE  TRUE
+```
+
+```r
 inf1 || inf2
+```
+
+```
+## [1] FALSE
 ```
 
 # Auswertung einer 96-Well-Platte
@@ -704,20 +843,41 @@ inf1 || inf2
 Das Paket Biotech enthält Datensätze welche zum Testen und Experimentieren angefügt wurden, zwei davon sind ELISA-Assays wie sie im Immunologischen Praktikum zum Nachweis vom Humanserumalbumin in Urin entstehen.
 Um uns zu verdeutlichen wie groß die Absorptionen in welchen Wells waren können wir durch das anfertigen einer Heatmap schnell die gemessenen Daten visualisiert vor Augen führen.
 Eine Heatmap ordnet einem Wert eine Farbintensität zu, hierbei kann die räumliche Anordnung leicht berücksichtigt werden.
-```{r}
+
+```r
 str(HSA1)
+```
+
+```
+## tibble [8 × 14] (S3: tbl_df/tbl/data.frame)
+##  $ clara: chr [1:8] "A" "B" "C" "D" ...
+##  $ s1   : num [1:8] -42.1 -42 -42 -42 -41.7 ...
+##  $ s2   : num [1:8] -4 -1.46 12.95 18.74 28.12 ...
+##  $ s3   : num [1:8] -5.088 0.187 10.266 19.309 29.059 ...
+##  $ s4   : num [1:8] -7.02 2.07 10.08 17.14 29.86 ...
+##  $ s5   : num [1:8] 4.85 -8.15 -8.2 19.12 8.71 ...
+##  $ s6   : num [1:8] 4.43 -4.85 13.89 19.07 4.71 ...
+##  $ s7   : num [1:8] -6.5 17.61 1.65 21.66 -8.34 ...
+##  $ s8   : num [1:8] -5.983 13.987 0.234 18.603 -10.787 ...
+##  $ s9   : num [1:8] -6.69 3.3 -10.65 -8.71 -9.47 ...
+##  $ s10  : num [1:8] -9.23 4.76 -6.93 -10.88 -4.15 ...
+##  $ s11  : num [1:8] 13.94 19.45 -21.71 -4.76 -2.12 ...
+##  $ s12  : num [1:8] 17.1426 15.3057 -19.5948 -3.6282 0.0455 ...
+##  $ Std  : num [1:8] -5.371 0.265 11.098 18.399 29.012 ...
 ```
 
 ## Rohdatenaufarbeitung und Plotten
 
 Um nur die Informationen zu bekommen, die wir benötigen werden wir ein paar Transformationsschritte durchführen:
-```{r}
+
+```r
 daten <- HSA1[,2:13] %>% 
     as.matrix() %>% 
     as.vector()
 ```
 Nun liegen die Messwerte als Vektor in lineare Form vor, diese können wir in einem Grid "fangen", dazu müssen wir dieses Grid erst mal "aufspannen":
-```{r}
+
+```r
 # y wird durchnummeriert, als charcter
 y  <- paste0(seq(1,12))
 
@@ -735,6 +895,8 @@ ggplot( data = grid.1, mapping = aes( X, Y, fill = Abs ) )+
     geom_tile()
 ```
 
+![plot of chunk unnamed-chunk-12](figure/unnamed-chunk-12-1.png)
+
 ## Definition einer Funktion
 
 Um in Zukunft schneller das selbe machen zu können schreiben wir eine Funktion welche diese Aufgabe übernimmt.
@@ -742,7 +904,8 @@ R ist eine funktionale Programmsprache, das bedeutet, dass es für viele Problem
 Dies erleichtert gerade nicht-Programmierern das schreiben von Skripten.
 Sollte nun jedoch, wie in unserem Fall, keine Funktion für das Problem zur Hand sein wird diese einfach geschrieben:
 
-```{r}
+
+```r
     # Name:
 vis96 <- 
     # die function-Funktion
@@ -768,9 +931,12 @@ vis96 <-
 }
 ```
 Wir können diese Funktion nun testen, dazu verwenden wir den zweiten HSA-Assay (HSA2):
-```{r}
+
+```r
 vis96(HSA.assay = HSA2)
 ```
+
+![plot of chunk unnamed-chunk-14](figure/unnamed-chunk-14-1.png)
 
 Die Vorteil des Verwendens einer Funktion werden im Beispiel klar:
 
@@ -795,19 +961,49 @@ Für den 2. Assay können wir einen ähnlichen Zusammenhang feststellen, auch au
 
 Vor Beginn der Berechnung der HSA-Konzentration in den Proben müssen wir den Mittelwert der Standardreihen berechnen, die Herausforderung besteht hierbei darin die passenden Spalten zu selektieren.
 Anhand des Pipettierschemas kann nachvollzogen werden, dass die entsprechenden Auftragungen in den Spalten 2 bis 4 liegen.
-```{r}
+
+```r
 # wo liegen die Werte der Standards
 stdr <- HSA1[3:5]  %>% 
     rowMeans()
 ```
 Aus dieser Standardreihe können wir dann wieder, wie bereits vorher geschehen, eine Regression errechnen:
-```{r}
+
+```r
 # Zuordnung der Konzentrationen
 conc <- c(0, 5, 10, 15, 20, 30, 40, 50)
 
 # welche Konzentrationen gibt das Modell für die Standards aus
 conc_eval(abs_P = stdr, abs_std = stdr, conc_std = conc)
+```
 
+```
+## 
+## Call:
+## stats::lm(formula = conc_std ~ abs_std)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -8.3909 -2.3392 -0.0641  3.1028  7.7572 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)   1.6994     3.0164   0.563 0.593584    
+## abs_std       0.9200     0.1107   8.308 0.000165 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 5.338 on 6 degrees of freedom
+## Multiple R-squared:   0.92,	Adjusted R-squared:  0.9067 
+## F-statistic: 69.03 on 1 and 6 DF,  p-value: 0.0001649
+```
+
+```
+## [1] -3.241947  1.943520 11.910019 18.626572 28.390852 31.424134 38.704011
+## [8] 42.242840
+```
+
+```r
 # Definition einer Funktion
 HSA.conc.eval <- function(HSA,
          mes) {
@@ -823,13 +1019,47 @@ HSA.conc.eval <- function(HSA,
 # Testen der Funktion
 HSA.conc.eval(HSA1, HSA1[3:5])
 ```
+
+```
+## 
+## Call:
+## stats::lm(formula = conc_std ~ abs_std)
+## 
+## Residuals:
+##     Min      1Q  Median      3Q     Max 
+## -8.3909 -2.3392 -0.0641  3.1028  7.7572 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)   1.6994     3.0164   0.563 0.593584    
+## abs_std       0.9200     0.1107   8.308 0.000165 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 5.338 on 6 degrees of freedom
+## Multiple R-squared:   0.92,	Adjusted R-squared:  0.9067 
+## F-statistic: 69.03 on 1 and 6 DF,  p-value: 0.0001649
+```
+
+```
+##           s2        s3        s4
+## 1 -1.9853020 -2.981952 -4.758589
+## 2  0.3546584  1.871299  3.604604
+## 3 13.6144345 11.144476 10.971146
+## 4 18.9443445 19.464336 17.471036
+## 5 27.5675322 28.434184 29.170838
+## 6 32.1607880 32.724112 29.387501
+## 7 39.7006606 41.173969 35.237403
+## 8 40.8273083 39.354000 46.547212
+```
 Wenn wir uns dieses Ergebnis ansehe, fällt auf, dass die Leerwerte negativ sind, das kann aber (real) nicht sein.
 
 ## Berücksichtigung des Verdünnungsfaktor
 
 Die Verdünnungsfaktoren sind Bekannt, sie müssen lediglich mit-einberechnet werden.
 Man könnte die Funktion zusätzlich erweitern:
-```{r}
+
+```r
 HSA.conc.eval <- function(HSA,
          mes,
          FV = 1) {
@@ -845,8 +1075,42 @@ HSA.conc.eval <- function(HSA,
 # Testen mit dem zweiten Datensatz
 HSA.conc.eval(HSA2, HSA2[3:5])
 ```
+
+```
+## 
+## Call:
+## stats::lm(formula = conc_std ~ abs_std)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -4.455 -3.896 -0.661  1.751  6.856 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)  -39.560      6.824  -5.797  0.00115 ** 
+## abs_std       37.805      4.106   9.207 9.26e-05 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 4.853 on 6 degrees of freedom
+## Multiple R-squared:  0.9339,	Adjusted R-squared:  0.9229 
+## F-statistic: 84.76 on 1 and 6 DF,  p-value: 9.261e-05
+```
+
+```
+##         s2       s3        s4
+## 1 -6.63252 -7.69105 -5.384965
+## 2  5.99424  5.99424  5.275952
+## 3 13.59298 15.59663 12.496644
+## 4 18.99905 18.58320 19.112461
+## 5 25.38804 23.68683 24.291701
+## 6 31.09654 31.13435 29.470941
+## 7 38.88430 41.15258 39.526983
+## 8 44.63061 43.38306 41.417216
+```
 Da nach dem Auftragsschema die Verdünnungsfaktoren auch in den Spalten variieren können müssen wir uns diese noch ein mal genauer ansehen.
-```{r}
+
+```r
 dat.1 <- tibble(
  "FV1000" = c(rowMeans(HSA2[,6:7]),
               rowMeans(HSA2[1:4, 8:9])
@@ -859,6 +1123,67 @@ conc.1 <- tibble(
   "aus FV1000" = HSA.conc.eval(HSA2, dat.1$"FV1000", 1000),
   "aus FV5000" =  HSA.conc.eval(HSA2, dat.1$FV5000, 5000)
 )
+```
+
+```
+## 
+## Call:
+## stats::lm(formula = conc_std ~ abs_std)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -4.455 -3.896 -0.661  1.751  6.856 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)  -39.560      6.824  -5.797  0.00115 ** 
+## abs_std       37.805      4.106   9.207 9.26e-05 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 4.853 on 6 degrees of freedom
+## Multiple R-squared:  0.9339,	Adjusted R-squared:  0.9229 
+## F-statistic: 84.76 on 1 and 6 DF,  p-value: 9.261e-05
+## 
+## 
+## Call:
+## stats::lm(formula = conc_std ~ abs_std)
+## 
+## Residuals:
+##    Min     1Q Median     3Q    Max 
+## -4.455 -3.896 -0.661  1.751  6.856 
+## 
+## Coefficients:
+##             Estimate Std. Error t value Pr(>|t|)    
+## (Intercept)  -39.560      6.824  -5.797  0.00115 ** 
+## abs_std       37.805      4.106   9.207 9.26e-05 ***
+## ---
+## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+## 
+## Residual standard error: 4.853 on 6 degrees of freedom
+## Multiple R-squared:  0.9339,	Adjusted R-squared:  0.9229 
+## F-statistic: 84.76 on 1 and 6 DF,  p-value: 9.261e-05
+```
+
+```r
 conc.1
+```
+
+```
+## # A tibble: 12 x 2
+##    `aus FV1000` `aus FV5000`
+##           <dbl>        <dbl>
+##  1      -10640.      -97431.
+##  2      -12719.      -65202.
+##  3       -1945.      -79662.
+##  4       24802.      -59909.
+##  5       -5839.      -95918.
+##  6      -15687.     -135330.
+##  7      -16235.      -91854.
+##  8       -4875.      -52727.
+##  9       -2531.      -89870.
+## 10      -20337.      -93650.
+## 11        2743.      -81175.
+## 12      -19467.      -60855.
 ```
 
