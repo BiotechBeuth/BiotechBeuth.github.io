@@ -76,6 +76,7 @@ Diese fassen wir gleich als tibble zusammen:
 Std <- tibble(
   mes.1 = c(0.031,	0.092,	0.191,	0.278,	0.332, 0.363),
   mes.2 = c(0.04, 0.103, 0.201, 0.279, 0.348, 0.36),
+
   mes.3 = c(0.009, 0.077, 0.166, 0.205, 0.25, 0.397), 
   mes.4 = c(0.007, 0.084, 0.166, 0.205, 0.353, 0.371),
   )
@@ -200,11 +201,10 @@ R ist eine interpretierte Sprache, das bedeutet, dass ein Interpreter
 die Statements, welche an ihn gegeben werden, interpretiert. Wenn man
 nun R in seiner ursprünglichsten Form haben will, so bekommt man es als
 Kommandozeilen-Interpreter. Dazu muss man `R` lediglich installieren und
-in einer [TE]{acronym-label="TE" acronym-form="singular+short"} `R`
+in einer Terminalemulation (TE) `R`
 eingeben und Enter drücken. Dadurch wird der Interpreter *erweckt* und
 steht zur Verfügung, wie das aussehen kann, soll durch
-[\[app::Kommandozeile\]](#app::Kommandozeile){reference-type="ref"
-reference="app::Kommandozeile"} nachvollziehbar gemacht werden.
+ nachvollziehbar gemacht werden.
 Innerhalb dieser Umgebung gilt nun R, allerdings soll gesagt sein, dass
 diese Umgebung nichts für tippfaule ist, sie ist als Taschenrechner
 ebenso verlässlich wie für etwas umfangreichere Aufgaben. Sollte man
@@ -503,9 +503,8 @@ vor. Das handgeschriebene Manuskript kann gut direkt in die R-Umgebung
 übertragen werden, in Form eines `tibble`'s zum Beispiel. Um Daten aus
 [csv]{acronym-label="csv" acronym-form="singular+short"}-Dateien zu
 importieren steht `read_csv` aus dem Paket `readr` zur Verfügung. So
-kann die Tabelle
-[\[app::CSV\_Dat1\]](#app::CSV_Dat1){reference-type="ref"
-reference="app::CSV_Dat1"}, welche als [csv]{acronym-label="csv"
+kann die Tabelle [https://github.com/BiotechBeuth/BiotechBeuth.github.io/blob/master/bsp.csv]
+, welche als [csv]{acronym-label="csv"
 acronym-form="singular+short"} dort vorliegt wie folgt importiert
 werden:
 

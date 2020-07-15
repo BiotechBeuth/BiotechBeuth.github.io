@@ -1,10 +1,16 @@
 ---
 title: "R Intro für Biotechnologen"
 author: "U. Rieger"
+bibliography: Bibliogrphie_BA_1.bib
 output: 
   html_document: 
     fig_caption: yes
-    toc: yes
+    toc: true
+    toc_float: true
+    toc_collapsed: true
+    toc_depth: 3
+    number_sections: true
+theme: lumen
 ---
 
 ```{r setup, include=FALSE}
@@ -58,6 +64,7 @@ Diese fassen wir gleich als tibble zusammen:
 Std <- tibble(
   mes.1 = c(0.031,	0.092,	0.191,	0.278,	0.332, 0.363),
   mes.2 = c(0.04, 0.103, 0.201, 0.279, 0.348, 0.36),
+
   mes.3 = c(0.009, 0.077, 0.166, 0.205, 0.25, 0.397), 
   mes.4 = c(0.007, 0.084, 0.166, 0.205, 0.353, 0.371),
   )
@@ -129,11 +136,10 @@ R ist eine interpretierte Sprache, das bedeutet, dass ein Interpreter
 die Statements, welche an ihn gegeben werden, interpretiert. Wenn man
 nun R in seiner ursprünglichsten Form haben will, so bekommt man es als
 Kommandozeilen-Interpreter. Dazu muss man `R` lediglich installieren und
-in einer [TE]{acronym-label="TE" acronym-form="singular+short"} `R`
+in einer Terminalemulation (TE) `R`
 eingeben und Enter drücken. Dadurch wird der Interpreter *erweckt* und
 steht zur Verfügung, wie das aussehen kann, soll durch
-[\[app::Kommandozeile\]](#app::Kommandozeile){reference-type="ref"
-reference="app::Kommandozeile"} nachvollziehbar gemacht werden.
+ nachvollziehbar gemacht werden.
 Innerhalb dieser Umgebung gilt nun R, allerdings soll gesagt sein, dass
 diese Umgebung nichts für tippfaule ist, sie ist als Taschenrechner
 ebenso verlässlich wie für etwas umfangreichere Aufgaben. Sollte man
@@ -432,9 +438,8 @@ vor. Das handgeschriebene Manuskript kann gut direkt in die R-Umgebung
 übertragen werden, in Form eines `tibble`'s zum Beispiel. Um Daten aus
 [csv]{acronym-label="csv" acronym-form="singular+short"}-Dateien zu
 importieren steht `read_csv` aus dem Paket `readr` zur Verfügung. So
-kann die Tabelle
-[\[app::CSV\_Dat1\]](#app::CSV_Dat1){reference-type="ref"
-reference="app::CSV_Dat1"}, welche als [csv]{acronym-label="csv"
+kann die Tabelle [https://github.com/BiotechBeuth/BiotechBeuth.github.io/blob/master/bsp.csv]
+, welche als [csv]{acronym-label="csv"
 acronym-form="singular+short"} dort vorliegt wie folgt importiert
 werden:
 
@@ -660,44 +665,224 @@ verständlichen Syntax und einem Anwenderfreundlichen *Code*. Das
 Die Pakete `ggplot2` und `dplyr` finden in `Biotech` viel Anwendung,
 dazu später mehr.
 
+## Einfache Übungen
 
-Zu Beginn wollen wir uns den verschiedenen Operatoren widmen.
-Operatoren gehören zu den reservierten Begri
+Zu Beginn sollte man sich auf den Gebrauch simpler Operatoren konzentrieren, wenn man sie verstanden hat, wird's später leichter ;-)
 
 ```{r}
 x = 1
 y = 2
 
 x != y
-# [1] TRUE
 x == y
-# [1] FALSE
 x < y
-# [1] TRUE
 x > y
-# [1] FALSE
-
 z = 1
-
 x >= z
-# [1] TRUE
-
 x <= z
-# [1] TRUE
-
 vec1 <- trunc(runif(n = 10, min = 3, max = 7))
 vec2 <- trunc(runif(n = 10, min = 3.5, max = 7.7))
 vec3 <- trunc(runif(n = 10, min = 3, max = 8))
-
 inf1 <- c(vec1 == vec2)
 inf2 <- c(vec2 == vec3)
 inf3 <- c(vec1 == vec3)
-
 inf1 &  inf2
 inf1 && inf2
 inf1 |  inf2
 inf1 || inf2
 ```
+
+Des weiteren stehen uns eine Menge mathematische Grundfunktionen zur Verfügung, diese sollen an dieser Stelle nur stiefmütterlich behandelt werden:
+
+```{r}
+# Ihr könnt die trigonometrischen Funktionen nutzen:
+par(mfrow = c(1,1))
+plot(atan(1:50))
+plot(cos(seq(0, 15, .01)), type = "l")
+
+# Man kann toll spielen
+Dings1 <- sin(seq(0, 15, .01))
+Dings2 <- (sin(seq(0, 15, .01) * .5) * 2.3 )^ 3
+
+# base::par ermöglicht es uns 2 oder mehrere Plots neben einander
+# in der selben Grafik unterzubringen
+par(mfrow=c(1,2))  
+plot(Dings1, type = "l")
+plot(Dings2, type = "l")
+```
+
+### Funktionen definieren
+
+Das Definieren einer Funktion ist recht Einfach.
+Wir möchten hier zusammen anhand des Zylindervolumens exemplarisch vorgehen:
+
+```{r}
+# Berechnung von Zylinder-Volumina
+h <- 1:10
+d <- seq(.444, 10.23, length.out = 10)
+    
+# Funktion definieren
+vol <- function(d, h) pi * (d/2)^ 2 * h
+(vol  <- vol(h = h, d = d))
+par(mfrow = c(1,1))
+plot(vol, h/2)
+
+# Zurück rechnen auf die Höhe
+sqrt(((4 * vol) / ( pi * h )))
+```
+
+### Funktionen auf Datenstrukturen anwenden 
+
+Hierzu verwenden wir `lapply` oder `sapply`:
+
+```{r}
+# Zu Beginn lassen wir Daten entstehen 
+liste <- list(a = runif(n = 20, min = 2, max = 5),
+          b = 1:6,
+          c = rnorm(n = 5))
+
+
+# Die Mittelwerte über lapply
+(x  <- lapply(X = liste, FUN = mean))
+
+# die Mittelwerte über sapply
+(y = sapply(X = liste, FUN = mean))
+
+# vergleichen der Ergebnisse 
+is(x) == is (y)
+
+# Was ist gleich, was ist anders?
+is(x)
+is(y)
+```
+
+Das Paket `purrr` stellt uns zusätzliche Tools zur Verfügung:
+
+```{R}
+# das Paket purrr stellt map() zur Verfügung, ähnlich zu apply()
+library(purrr)
+map(liste,  mean)
+```
+
+## Verteilungsmodelle 
+
+R kennt eine menge verschiedener Verteilungsmodelle, hier ein Paar interessante:
+
+```{r}
+# Die Poisson-Verteilung
+poissVer <- dpois(x = seq(0, 100, 1), lambda = 50)
+
+par(mfrow=c(1,2))
+plot(poissVer)
+hist(poissVer)
+
+# Die Normalverteilung
+normVer <- rnorm(n = 100, mean = 50, sd = 10)
+
+par(mfrow=c(1,2))
+plot(normVer)
+hist(normVer)
+
+# geometrische Normalverteilung
+geoVer <- dgeom(x = 0:50, prob = .1)
+plot(geoVer)
+hist(geoVer)
+
+# Chi-Quadrat-Verteilung
+chiVer <- dchisq(x = 0:30, df = 15)
+plot(chiVer)
+hist(chiVer)
+
+# Uniform Verteilung 
+unifVer <- runif(n = 100, min = 0, max = 10)
+plot(unifVer)
+hist(unifVer)
+
+par(mfrow=c(1,5))
+# boxplots der Verteilungen
+boxplot(unifVer)
+boxplot(geoVer)
+boxplot(chiVer)
+boxplot(normVer)
+boxplot(poissVer)
+```
+
+Diese Verteilungs-Funktionen können gut genutzt werden, um experimentelle  Daten zu simulieren.
+
+```{r}
+m = rnorm(n = 1)
+x = sort(
+         runif(n = 15, 
+               min = 1, 
+               max = 13)
+) 
+b = rnorm(n = 1)
+# Werte in einen Kontext bringen:
+y <- c(m * x + b) 
+# Plotten wir nun mit gglplot
+library(ggplot2)
+plot1 <- ggplot(mapping = aes( x = 1:15, y = y ))
+plot2  <- plot1 + geom_point()
+plot2
+
+# Wir können nun eine Regressionsgerade einplotten
+plot2 + geom_smooth(method = "lm")
+
+# Und die Parameter "intercept"(=b) sowie "slope"(=m) ermitteln
+x <- seq(1,15,1)
+
+# Wir fangen nun an der magrittr-forward-pipe-operator ( %>% ) zu verwenden
+library(magrittr)
+modell <- lm(y~x)  %>% 
+   summary()
+
+# Diese Ergebnisse können auch als Sätzchen formuliert werden:
+paste("Das Modell hat die Steigung m",
+      paste(modell$coefficients[2]),
+      "und einen Schnittpunkt mit der y-Achse bei",
+      paste(modell$coefficients[1]))
+
+```
+Wir simulieren nun verschiedene Aktivitätsbestimmungen von Typ-Michaelis-Menten-Enzymen:
+
+```{r}
+# Mit dieser Funktion möchten wir die Daten generieren
+MicMen <- function (S, kM, Vmax) {
+    v <- (Vmax * S) / (kM + S)
+    return(v)
+}
+
+# Wir definieren Substratkonzentrationen:
+S1 =  c(.1, .125, .15, .175, .2, .25, .3, .4, .5, .7, 1, 2, 5, 10, 20,   
+40, 60, 80, 100)
+# Ein fiktives Vmax
+vMax1 = 3
+# Und ein fiktives kM 
+kM1 = .1
+
+MM1 <- MicMen( S = S1, Vmax = vMax1, kM = kM1 ) 
+
+# Wir werden nun das Modell fitten, dies wird über das Paket drc gehen
+# install.packages("drc")
+library(drc)
+
+Daten <- data.frame( S = S1, v = MM1 )  
+
+fit1 <- drm(
+            v~S,
+            data = Daten,
+            # Hier spezifizieren wir das Modell, ein 2-Parameter MM-Modell
+            fct = MM.2()
+)
+
+# Wie ist unser Modell nun?:
+summary(fit1)
+
+par(mfrow = c(1,1))
+plot(fit1)
+```
+
+
 
 # Auswertung einer 96-Well-Platte
 
