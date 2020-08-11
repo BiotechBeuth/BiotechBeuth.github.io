@@ -20,7 +20,7 @@ knitr::opts_chunk$set(echo = TRUE)
 # Laden benötigter Pakete
 
 In diesem Intro werden wir mit dem Paket Biotech arbeiten, dieses installieren wir mit:
-```{r , eval = T}
+```{r , eval = FALSE}
 # devtools::install_github("https://github.com/Utzi1/Biotech")
 devtools::load_all("~/Bachelor/Biotech")
 ```
@@ -136,23 +136,22 @@ R ist eine interpretierte Sprache, das bedeutet, dass ein Interpreter
 die Statements, welche an ihn gegeben werden, interpretiert. Wenn man
 nun R in seiner ursprünglichsten Form haben will, so bekommt man es als
 Kommandozeilen-Interpreter. Dazu muss man `R` lediglich installieren und
-in einer Terminalemulation (TE) `R`
+in einer [TE]{acronym-label="TE" acronym-form="singular+short"} `R`
 eingeben und Enter drücken. Dadurch wird der Interpreter *erweckt* und
-steht zur Verfügung, wie das aussehen kann, soll durch
- nachvollziehbar gemacht werden.
+steht zur Verfügung. Wie das aussehen kann, soll durch
+[\[app::Kommandozeile\]](#app::Kommandozeile){reference-type="ref"
+reference="app::Kommandozeile"} nachvollziehbar gemacht werden.
 Innerhalb dieser Umgebung gilt nun R, allerdings soll gesagt sein, dass
-diese Umgebung nichts für tippfaule ist, sie ist als Taschenrechner
-ebenso verlässlich wie für etwas umfangreichere Aufgaben. Sollte man
-jedoch eine Auswertung häufiger durchführen oder eine umfangreiche
-Untersuchung durchführen, so bietet sich das schreiben von Skripten an.
-Ein R-Skript wird durch zwei grundlegende Informationen geprägt:
+diese Umgebung nichts für Tippfaule ist, sie ist als Taschenrechner
+ebenso verlässlich wie für etwas umfangreichere Aufgaben. Ein R-Skript
+wird durch zwei grundlegende Informationen geprägt:
 
 Dateiendung
 
-:   Das Skript selbst ist eine Textdatei, diese endet mit `.R`, also wie
+:   Das Skript selbst ist eine Textdatei, diese endet mit `.R`, so wie
     eine Excel-Datei auf `.xsxl` endet. Die Datei mit Namen
-    `irgendwas.R` kann zwar in jedem beliebigen Editor bearbeitet werden
-    aber wird nur erkannt, wenn die Endung korrekt ist.
+    `irgendwas.R` kann zwar in jedem beliebigen Editor bearbeitet
+    werden, wird aber nur erkannt, wenn die Endung korrekt ist.
 
 Inhalt
 
@@ -164,7 +163,7 @@ Wenn man dann das Skript geschrieben hat, kann es zum Beispiel über den
 Kommandozeilen-Interpreter interpretiert werden, bewerkstelligt wird das
 dann über `source("Pfad/zur/Datei")`. Wenn man sich in einem
 [IDE]{acronym-label="IDE" acronym-form="singular+short"} befindet, wie
-zum Beispiel R-Studio, erfolgt das bearbeiten und interpretieren von
+zum Beispiel R-Studio, erfolgt das Bearbeiten und Interpretieren von
 Skripten interaktiv.
 
 Grundlegende Begriffe
@@ -172,11 +171,11 @@ Grundlegende Begriffe
 
 Die recht gut nachvollziehbare Syntax kann gerade auch fachfremden
 Anwendern den Beginn enorm erleichtern, bereits ein paar Kenntnisse der
-englischen Sprache reichen Teilweise aus um viele der Befehle zu
-verstehen, ein paar besonders wichtige Zeichen (Operatoren) und
+englischen Sprache reichen teilweise aus, um viele der Befehle zu
+verstehen, einige besonders wichtige Zeichen (Operatoren) und
 Grundfunktionen wollen wir uns jedoch explizit ansehen:
 
-`+ - * /  ̂%% %/%`
+`+ - * /  ̂%% %/%`
 
 :   Sind die arithmetischen Operatoren *plus*, *minus*, *mal*,
     *geteilt*, *hoch*, *Modulus* (Teilen mit Rest) und die *ganzzahlige
@@ -220,14 +219,14 @@ Grundfunktionen wollen wir uns jedoch explizit ansehen:
 
 :   Markiert den Beginn eines Kommentars.
 
-Alle gelisteten Begriffe sind *reserviert*, das bedeutet, dass sie durch
-zum Beispiel eine Zuordnung durch einen Pfeil nicht überschrieben werden
-können. Es gibt weitere *Reserved Words in R*, diese können durch
+Alle gelisteten Begriffe sind *reserviert*, das bedeutet, dass sie zum
+Beispiel mittels einer Zuordnung durch einen Pfeil nicht überschrieben
+werden können. Es gibt weitere *Reserved Words in R*, diese können durch
 `?reserved` ausgegeben werden.
 
 ### Zuweisungen
 
-Ein weiterer reservierter Begriff ist `NA`, wenn wir Versuchen `NA` mit
+Ein weiterer reservierter Begriff ist `NA`. Wenn wir versuchen, `NA` mit
 einer neuen Variable zu überschreiben bekommen wir eine Fehlermeldung:
 
     > NA <- 1
@@ -265,14 +264,14 @@ nutzen, um sie kennen zu lernen.
 
 ### Vektoren und deren Subsetting
 
-Unter Subsetting versteht man das bilden kleiner Untereinheiten
+Unter Subsetting versteht man das Bilden kleiner Untereinheiten
 (subsets) aus größeren Sets (Datensets), im einfachsten Fall ein Vektor:
 
     > x <- c(1:6)
     # Subsets nach Position
     > x[2:3]
     [1] 2 3
-    # ein Sunbset als Zuweisung
+    # ein Subset als Zuweisung
     > y <- x[1:4]
     > y
     [1] 1 2 3 4
@@ -344,7 +343,7 @@ können wir dazu mit einem Vektor starten:
     [1,]    1    2    3
     [2,]    4    5    6
     [3,]    7    8    9
-    # Subset, jetz in zwei Dimensionen
+    # Subset, jetzt in zwei Dimensionen
     > mat.x[1:2, 2:3]
          [,1] [,2]
     [1,]    4    7
@@ -377,7 +376,7 @@ enthalten beispielsweise Matrices, Vektoren, Funktionen und mehr:
      [1] 0.63860417 0.25105358 0.64089547 0.49214046 0.48232077 0.30024825
      [7] 0.92896802 0.62018010 0.02472022 0.77797613
 
-    # Listen können über das Dollar Zeichen subsettet werden
+    # Listen können über das Dollar-Zeichen subsettet werden
     > Liste$Funktion
     function(x, y){x+y}
     # oder über die eckigen Klammern
@@ -393,7 +392,7 @@ enthalten beispielsweise Matrices, Vektoren, Funktionen und mehr:
 Der Dataframe ist eine Sonderform der Liste, alle in ihm enthaltenen
 Elemente haben die selbe Länge, er taucht gerade deswegen sehr oft auf.
 Sowohl das Subsetting, welches wir bei den Listen kennen gelernt haben,
-als auch das Subsetting welches bei Matrices angewandt wird kann auch
+als auch das Subsetting, welches bei Matrices angewandt wird, kann auch
 auf den Typ Dataframe angewandt werden.
 
 Tibble
@@ -410,12 +409,12 @@ and complain more (...).\
 
 Der `tibble` kann also als moderne  Überarbeitung des `data.frame`
 verstanden werden. Diese Modernisierung beinhaltete vor allem das faul
-machen  der Datenstruktur welche dazu führt, dass sie öfter Fehler
+machen  der Datenstruktur, welche dazu führt, dass sie öfter Fehler
 aufwirft. Der `tibble` ist eine sehr gebräuchliche Datenstruktur im
-`tidyverse` [@Wickham2019], eine moderne Paketsammlung welcher später
+`tidyverse` [@Wickham2019], eine moderne Paketsammlung, welcher später
 noch mehr Aufmerksamkeit geschenkt wird. Die Regeln für das Subsetting
 bei `tibble`'s sind die selben wie beim `data.frame`. Um einen `tibble`
-aus, zum Beispiel, Messwerten enstehen zu lassen gilt:
+aus, zum Beispiel, Messwerten enstehen zu lassen, gilt:
 
     > tibble(
     + Namen = c("Gustav", "Anna", "Roman", "Veronika"),
@@ -437,10 +436,11 @@ acronym-form="singular+short"} oder als handgeschriebenes Manuskript
 vor. Das handgeschriebene Manuskript kann gut direkt in die R-Umgebung
 übertragen werden, in Form eines `tibble`'s zum Beispiel. Um Daten aus
 [csv]{acronym-label="csv" acronym-form="singular+short"}-Dateien zu
-importieren steht `read_csv` aus dem Paket `readr` zur Verfügung. So
-kann die Tabelle [https://github.com/BiotechBeuth/BiotechBeuth.github.io/blob/master/bsp.csv]
-, welche als [csv]{acronym-label="csv"
-acronym-form="singular+short"} dort vorliegt wie folgt importiert
+importieren, steht `read_csv` aus dem Paket `readr` zur Verfügung. So
+kann die Tabelle
+[\[app::CSV\_Dat1\]](#app::CSV_Dat1){reference-type="ref"
+reference="app::CSV_Dat1"}, welche als [csv]{acronym-label="csv"
+acronym-form="singular+short"} dort vorliegt, wie folgt importiert
 werden:
 
     tab.1 <- read_csv("bsp.csv")
@@ -476,7 +476,7 @@ Für das Einlesen von [xslx]{acronym-label="xslx"
 acronym-form="singular+short"}-Datensätzen steht das Paket `readxl` zur
 Verfügung, die dort implementierten Funktionen importieren nach einem
 ähnlichen Schema wie `read_csv` Excel-Datensätze. Unter Verwendung von
-R-Studio wird der Datenimport stark vereinfacht da dort ein
+R-Studio wird der Datenimport stark vereinfacht, da dort ein
 [GUI]{acronym-label="GUI" acronym-form="singular+short"} den Datenimport
 begleitet.
 
@@ -496,16 +496,16 @@ Das hierbei beschriebene Problem könnte in R so gelöst werden:
 
     > x = "schlecht"
     > if (x == "gut") {
-    +   print("ab in's Töpfchen")
+    +   print("ab ins Töpfchen")
     + } else if (x == "schlecht") {
-    +   print("ab in's Kröpfchen")
+    +   print("ab ins Kröpfchen")
     + }
-    [1] "ab in's Kröpfchen"
+    [1] "ab ins Kröpfchen"
 
 ### `function`
 
 Das `function`-Statement kann [Aschenputtel]{.smallcaps} das Leben
-zusätzlich leichter machen, wenn sie tippfaul ist, kann die es in einer
+zusätzlich leichter machen, wenn sie Tippfaul ist, kann sie es in einer
 Funktion verpacken, welche immer wieder aufgerufen werden kann. Es ist
 wichtig zu bedenken, dass später von der Funktion nur der Name sichtbar
 ist und aus diesem Grund ein sinnvoller Name wärmstens zu empfehlen ist.
@@ -517,72 +517,73 @@ Die Definition einer Funktion erfolgt immer nach dem selben Schema:
     > Add(1, 2)
     [1] 3
 
-Im 2. Fall kann auf die geschweifte Klammer verzichtet werden da die
-ganze Definition auf einer Zeile platz hat und der Sinn durchaus
+Im 2. Fall kann auf die geschweifte Klammer verzichtet werden, da die
+ganze Definition auf einer Zeile Platz hat und der Sinn durchaus
 erhalten bleibt. Für [Aschenputtel]{.smallcaps} könnten wir annehmen:
 
     > Taube <- function(Linse) {
     +         if (Linse == "gut") {
-    +           print("ab in's Töpfchen")
+    +           print("ab ins Töpfchen")
     +         } else if (Linse == "schlecht") {
-    +           print("ab in's Kröpfchen")
+    +           print("ab ins Kröpfchen")
     +         }
     + }
     > x = "schlecht"
     > Taube(x)
-    [1] "ab in's Kröpfchen"
+    [1] "ab ins Kröpfchen"
     > y = "gut"
     > Taube(y)
-    [1] "ab in's Töpfchen"
+    [1] "ab ins Töpfchen"
 
 ### `for`
 
-Das `for`-Statement ermöglicht es für mehrere Werte wiederholend die
+Das `for`-Statement ermöglicht es, für mehrere Werte wiederholend die
 selbe Aufgabe durchzuführen, denn [Aschenputtel]{.smallcaps} hat ja
-nicht nur eine Linse sondern eine ganze Menge. Hierbei soll aber darauf
+nicht nur eine Linse, sondern eine ganze Menge. Hierbei soll aber darauf
 verwiesen werden, dass der Gebrauch von Schleifen in R eher untypisch
-ist da eine Vielzahl von Funktionen zur Verfügung steht welche sie
+ist, da eine Vielzahl von Funktionen zur Verfügung steht welche, sie
 leicht ersetzen können. Dennoch macht es Sinn sich diese Technik
-anzueignen, wenn man sie beherrscht kann man sie häufig sinnvoll
+anzueignen. Wenn man sie beherrscht, hann kann man sie häufig sinnvoll
 einsetzen. Eine weitere wichtige Information zum Gebrauch von
-`for`-Loops bezieht sich auf ihre Ausgabe. Der `for`-Loop ist langsam.
-Wenn seine Ausgabe nicht zuvor definiert wurde, das Bedeutet im
+`for`-Loops bezieht sich auf ihre Ausgabe. Der `for`-Loop ist langsam,
+wenn seine Ausgabe nicht zuvor definiert wurde. Das bedeutet im
 Umkehrschluss, dass man sich über die Ausgabe Gedanken machen sollte.
-Für [Aschenputtel]{.smallcaps} wollen wir nun die `Taube` automatisieren
-damit sie in der Lage ist einen Vektor aus `Linsen` zu klassifizieren
-und diese entweder ins `Kröpfchen` oder `Töpfchen` zu werfen:
+Für [Aschenputtel]{.smallcaps} wollen wir nun die `Taube`
+automatisieren, damit sie in der Lage ist, einen Vektor aus `Linsen` zu
+klassifizieren und diese entweder ins `Kröpfchen` oder `Töpfchen` zu
+werfen:
 
     1> y <- c("gut", "schlecht", "schlecht", "gut", "gut")
     2> Ausgabe <- vector(mode = "list", length = length(y)) 
     3> for (i in y) {
     4>    Ausgabe[[i]] <- Taube(i) 
     4>}
-    [1] "Ab in's Töpfchen"
-    [1] "Ab in's Kröpfchen"
+    [1] "Ab ins Töpfchen"
+    [1] "Ab ins Kröpfchen"
     # und so weiter
 
 1.  Zu Beginn erstellen wir den Vektor aus `Linsen` welche dann eben
     `schlecht` oder `gut` sind
 
-2.  der Vektor `y` aus `Linsen` bestimmt die Länge `length` der Ausgabe
+2.  Der Vektor `y` aus `Linsen` bestimmt die Länge `length` der Ausgabe
     da entsprechend der Anzahl an Linsen auch Klassifizierungen
     vorgenommen werden.
 
 3.  Nun wird in `for` jedes Element `i` (also jede `Linse`) in `y`
     untersucht.
 
-4.  Hier wird definiert mit was untersucht wird, nämlich mit `Taube`.
+4.  Hier wird definiert, womit untersucht wird, nämlich mit `Taube`.
 
 ### `while`
 
-Die `while`-Schleife führt so lange eine Anweisung aus bis eine
+Die `while`-Schleife führt so lange eine Anweisung aus, bis eine
 Bedingung erfüllt ist, dabei gilt:
 
     while(Bedingung){Anweisung}
 
 Diese Bedingung kann [Aschenputtel]{.smallcaps} zum Beispiel dabei
-helfen so lange Linsen zu sortieren, biss sie quantitativ genug davon
-hat um mit diesen einen Eintopf zu kochen. Wir können schreiben:
+helfen, so lange Linsen zu sortieren, bis sie quantitativ genug davon
+hat, um mit diesen einen Eintopf zu kochen. Wir können schreiben:
 
     1> x = 20
     2> Linsen = 100
@@ -598,11 +599,11 @@ hat um mit diesen einen Eintopf zu kochen. Wir können schreiben:
     [1] 100
 
 Hierbei ordnen wir im ersten Schritt `x` den Wert 20 zu, dabei handelt
-es dann um $20$ fiktive Linsen, wir benötigen allerdings $100$ fiktive
+es dann um $20$ fiktive Linsen. Wir benötigen allerdings $100$ fiktive
 Linsen, diese Zuordnung erfolgt in Schritt `2`. Um diese $100$ fiktive
 Linsen zu bekommen definieren wir die Bedingung für den `while`-Loop,
 diese bedeutet in Worten: So lange `x` nicht `Linsen` ist  läuft der
-Loop. Was der Loop dann macht ist in den Zeilen $4$ bis $6$ definiert.
+Loop. Was der Loop dann macht, ist in den Zeilen $4$ bis $6$ definiert.
 In Zeile $4$ wird zu `x` 20 addiert und daraus das neue `x` definiert,
 dieses wird dann in $6$ ausgegeben. Dieser Vorgang geschieht so lange,
 bis `x != Linsen` nicht mehr stimmt, also sobald $x = 100$ gilt.
@@ -613,20 +614,20 @@ Pakete und das `tidyverse`
 Wie bereits angesprochen verwendet man in R Pakete als Erweiterung des
 Funktions-Repertoires. Diese Erweiterung erfolgt abhängig von den
 Ansprüchen des Anwenders und muss dementsprechend vom Anwender
-individuell angepasst werden, eine sehr populäre Paketesammlung, das
-`tidyverse` soll jedoch nicht unbeachtet bleiben. Unter einer
-Paketsammlung versteht man den Zusammenschluss mehrere Pakete zu einem
+individuell angepasst werden. Eine sehr populäre Paketesammlung, das
+`tidyverse`, soll jedoch nicht unbeachtet bleiben. Unter einer
+Paketsammlung versteht man den Zusammenschluss mehrerer Pakete zu einem
 neuen und größerem Paket. Im Fall des `tidyverse` ist diese Sammlung auf
 das *saubere* Verarbeiten von Daten ausgelegt, der Fokus liegt auf einer
-verständlichen Syntax und einem Anwenderfreundlichen *Code*. Das
+verständlichen Syntax und einem anwenderfreundlichen *Code*. Das
 `tidyverse` beinhaltet folgende Kern-Komponenten [@Wickham2020]:
 
 `ggplot2`
 
-:   Im Namen versteckt sich bereits ein Hinweis auf das Buch *The Grammr
-    of Graphics* von [Leland Wilkinson]{.smallcaps} [@LW2005]. Auf Basis
-    dieses Buchs werden in `ggplot2` die Weichen für eine verbesserte
-    Datenvisualisierung gelegt.
+:   Im Namen versteckt sich bereits ein Hinweis auf das Buch *The
+    Grammar of Graphics* von [Leland Wilkinson]{.smallcaps} [@LW2005].
+    Auf Basis dieses Buchs werden in `ggplot2` die Weichen für eine
+    verbesserte Datenvisualisierung gelegt.
 
 `dplyr`
 
@@ -976,7 +977,7 @@ Für den 2. Assay können wir einen ähnlichen Zusammenhang feststellen, auch au
 
 # Konzentrationsbestimmung für den HSA-Assay
 
-# Rohdatenverarbeitung
+## Rohdatenverarbeitung
 
 Vor Beginn der Berechnung der HSA-Konzentration in den Proben müssen wir den Mittelwert der Standardreihen berechnen, die Herausforderung besteht hierbei darin die passenden Spalten zu selektieren.
 Anhand des Pipettierschemas kann nachvollzogen werden, dass die entsprechenden Auftragungen in den Spalten 2 bis 4 liegen.
@@ -1009,6 +1010,133 @@ HSA.conc.eval <- function(HSA,
 HSA.conc.eval(HSA1, HSA1[3:5])
 ```
 Wenn wir uns dieses Ergebnis ansehe, fällt auf, dass die Leerwerte negativ sind, das kann aber (real) nicht sein.
+
+## Vergleichen der Ergebnisse
+
+Um die Ergebnisse zu vergleichen wurde das folgende Skript geschrieben:
+
+```{r}
+# Es werden die Ergebnisse zweier unabhängig von einander durchgeführten
+# nicht-kompetitven ELISAs errechnet und verglichen
+
+#### ELISA 1 ################################################
+
+# Der HSA1 aus Biotech wird geladen und umbenannt
+HSA <- HSA1
+
+# Ausgeben eines Summary:
+summary(HSA)
+
+library(tidyverse)
+
+# Errechnen der Mittelwerte für die Standardreihe  
+HSA <- mutate(HSA, "Std"=((HSA$s2 + HSA$s3 + HSA$s4) / 3))
+HSA.2 <- mutate(HSA, "Std"=((HSA$s2 + HSA$s3 + HSA$s4) / 3))
+
+# Die Spalten 5&6, 7&8 sowie 9&10 führen neben einander die 
+# Probenabsorption
+Proben.1 <- c((HSA$s5 + HSA$s6)/2 , (HSA$s7[1:4]+HSA$s8[1:4])/2)
+Proben.2 <- c((HSA$s9 + HSA$s10)/2 , (HSA$s7[5:8]+HSA$s8[5:8])/2)
+
+
+
+# Es ist bekannt, dass Proben.1 1:5000 verdünnt wurde:
+Proben.1 <- Proben.1 * 5000
+
+# Proben.2 wurde 1:1000 Verdünnt
+Proben.2 <- Proben.2 * 1000
+    
+# Substratkonzentration
+subs <- seq(0, 50, length.out = length(HSA$Std))
+
+# Plot der Regression
+plot_regression(abs = HSA$Std[2:8], conc = subs[2:8])
+
+# Definition einer einfachen Funktion
+cHSA <- function (abs.P) {
+    conc_eval( abs.P, abs_std = HSA$Std, conc_std = subs)
+}
+
+# Testen der Funktion
+conc.1.1 <- conc_eval( abs_P = Proben.1, abs_std = HSA$Std , conc_std = subs )
+conc.1 <- cHSA(abs.P = Proben.1)
+
+# Sind die Ergebnisse die selben?
+conc.1 == conc.1.1
+
+# Berechnung der Konzentrationen
+conc.2 <- cHSA(Proben.2) 
+
+# Untersuchung der Patienten-Proben
+Patient.1 <- (sum(HSA[1:2, 11], HSA[1:2, 12]) / 4) * 20000
+Patient.2 <- (sum(HSA[4:5, 11], HSA[4:5, 12]) /4) * 100000
+
+# Berechnung der Patienten-Proben-Konzentration
+cHSA(Patient.1)
+cHSA(Patient.2)
+
+# Untersuchung der Verteilung der Messwerte
+boxplot(conc.1, conc.2, Patient.1, Patient.2)
+
+##### HSA2 ###############################################
+
+HSA.A <- HSA2
+summary(HSA.A)
+
+# 2, 3, 4 sind die Standards
+HSA.A <- mutate(HSA.A, Std=((HSA.A$s2 + HSA.A$s3 + HSA.A$s4) / 3))
+ 
+# Die Spalten 5&6, 7&8 sowie 9&10 führen neben einander die 
+# Probenabsorption
+Proben.1.A <- c((HSA.A$s5 + HSA.A$s6)/2 , (HSA.A$s7[1:4]+HSA.A$s8[1:4])/2)
+Proben.2.A <- c((HSA.A$s9 + HSA.A$s10)/2 , (HSA.A$s7[5:8]+HSA.A$s8[5:8])/2)
+
+# Es ist bekannt, dass Proben.1 1:5000 verdünnt wurde:
+Proben.1.A <- Proben.1.A * 5000
+
+# Proben.2 wurde 1:1000 Verdünnt
+Proben.2.A <- Proben.2.A * 1000
+
+# Plot der Regression
+plot_regression(abs = HSA.A$Std[2:8], conc = subs[2:8])
+
+# Definition einer einfachen Funktion
+cHSA.A <- function (abs.P) {
+    conc_eval( abs.P, abs_std = HSA.A$Std, conc_std = subs)
+}
+
+# Testen der Funktion
+conc.1.A <- cHSA(abs.P = Proben.1.A)
+
+# Berechnung der Konzentrationen
+conc.2.A <- cHSA(Proben.2.A) 
+
+# Untersuchung der Patienten-Proben
+Patient.1.A <- (sum(HSA.A[1:2, 11], HSA.A[1:2, 12]) / 4) * 20000
+Patient.2.A <- (sum(HSA.A[4:5, 11], HSA.A[4:5, 12]) /4) * 100000 
+
+# Berechnung der Patienten-Proben-Konzentration
+cHSA(Patient.1.A)
+cHSA(Patient.2.A)
+
+####### Vergleich der Ergebnisse ##################################
+
+# als erstes sollten wir überprüfen, dass es sich tatsächlich um 
+# zwei verschiedene Datensätze handelt
+HSA == HSA.A
+
+boxplot(Patient.1.A ,Patient.1, Patient.2.A, Patient.2)
+boxplot(conc.1, conc.1.A)
+boxplot(conc.2, conc.2.A)
+boxplot(conc.1.A, conc.2.A)
+hist(conc.2.A)
+
+library(outliers)
+outlier(conc.2.A)
+
+
+```
+
 
 ## Berücksichtigung des Verdünnungsfaktor
 
@@ -1045,5 +1173,195 @@ conc.1 <- tibble(
   "aus FV5000" =  HSA.conc.eval(HSA2, dat.1$FV5000, 5000)
 )
 conc.1
+```
+# Ein Progesteron-Assay
+
+```{r, eval = FALSE}
+# Progesteron-Assay
+# Laden der Standardreih# Die Werte, welche als Grundlage für die Standardreihe verwendet werden wurden
+# hierbei noch verändert, es wird angenommen, dass die Spalte MW Werte auslässt, 
+# welche den Mittelwert zu stark verfälschene
+library(readxl)
+# Die Excel-Tabelle findet ihr im GitHub-Repository 
+# https://github.com/BiotechBeuth/Str1
+STR1 <- read_excel("Pfad/zur/Datei/STR1.xlsx")
+str(STR1)
+
+# Laden von Biotech
+library(devtools)
+load_all("../../Biotech")
+
+# 
+library(tidyverse)
+
+# Errechnen der Mittelwerte
+STR1 <- mutate(STR1, Std = (STR1$E1 + STR1$E2 + STR1$E3)/3)
+
+# Vergleich der Mittelwerte aus den Standards und den von der Gruppe errechneten Werten:
+tibble(
+        STR1$MW == STR1$Std,
+        STR1$MW, 
+        STR1$Std
+)
+# Die Werte, welche als Grundlage für die Standardreihe verwendet werden wurden
+# hierbei noch verändert, es wird angenommen, dass die Spalte MW Werte auslässt, 
+# welche den Mittelwert zu stark verfälschen
+dose_response_plot(STR1$conc,STR1$Std)
+dose_response_plot(STR1$conc,STR1$MW)
+# Das nicht-lineare Modell:
+library(dr4pl)
+fit <-  dr4pl(STR1$conc[1:8]~STR1$MW[1:8])
+conc.eval.DR <- function (abs.P) {
+   fit$parameters[1] + ((fit$parameters[4] - fit$parameters[1])/(1 + (abs.P/fit$parameters[2])^fit$parameters[3]))
+}
+conc.eval.DR(STR1$Std)
+
+# Export der generierten Daten 
+write.csv(STR1, "./STR1.csv")
+```
+# Untersuchung der Messdaten eines Aufschlusses von Hefe in einer Rührwerkskugelmühle
+
+```{r}
+# Laden der benötigten Pakete
+library(pander)
+library(ggplot2)
+
+# Übertragung der Rohdaten
+zeit <- c(0,1,2,5,7.5,10,15,20,30,45,60,75,90)
+
+# Bei i handelt es sich um das theoretische Volumen der Aufschlussflüssigkeit
+# dieses steigt oder sinkt unter Zugabe von Lauge oder Probennahme
+i <- c( 4000+0,
+        3985+0,
+        3970+0,
+        3955+5,
+        3940+5+42,
+        3925+5+42+0,
+        3910+5+42+0+0,
+        3895+5+42+0+0+23,
+        3880+5+42+0+0+23+30,
+        3865+5+42+0+0+23+30+36,
+        3850+5+42+0+0+23+30+36+46,
+        3835+5+42+0+0+23+30+36+46+26,
+        3820+5+42+0+0+23+30+36+46+26)
+
+# Bei N handelt es sich um die theoretische Passagenzahl
+N <- ((10000/i)*(zeit/60))
+
+# Rohdaten des Bradfordassay
+Std <-  seq(0,100,20)
+Abs <- c(.374,
+         .5,
+         .617,
+         .78,
+         .874,
+         .985)
+
+# Probennahme-Zeitpunkte
+zeit <- c(0,1,2,5,7.5,10,15,20,30,45,60,75,90)
+
+# Verdünnungsfaktoren der Einzelmessungen
+FV <- c(20,20,20,20,20,20,20,20,20,50,50,50,50)
+
+# Absorptionsmessungen des Bradford-Assay
+Absorbtion <- c(.346 , .384 , .501 , .603 , .607 , .725 , .7153 , .801 , 1.018 , .689 , .721 , .753 , .740)
+
+# Fumaraseaktivität
+Aktivit <- c(0 ,.26 , 1.07 , 1.619 , 3 , 2.3 , 3.26 , 7.22 , 15.75 , 11.3 , 10.52 , 9.98 , 12.36)
+i <- 4000
+
+# Leitfähigkeit der Aufschlussflüssigkeit
+Leitf <- c(11.2,11.2,11.4,11.7,11.7,12.3,12.5,12.8,13.6,13.8,14.3,15.1,17.8)
+
+# Temperatur der Aufschlussflüssigkeit
+Temp <- c(22,20.5,20.5,21,22,22,23,22,23,22,22,22,22)
+
+# pH der Aufschlussflüssigkeit
+ph <- c(7.02,6.91,6.8,6.59,6.64,7.35,6.92,6.68,6.57,6.46,6.47,6.55,7.46)
+
+# Zugabevolumen an Lauge (Kalilauge)
+KOH <- c(0,0,0,5,42,0,0,23,30,36,46,0,0)
+
+# Zugabe an Lauge (Natronlauge)
+NaOH <- c(0,0,0,0,0,0,0,0,0,0,0,26,0)
+
+
+ggplot(mapping = aes(y=Leitf/2, x=zeit))+
+  geom_line(color="green")+
+  geom_line(mapping = aes(zeit , ph) , color = "blue")+
+  geom_line(mapping = aes(zeit,Temp/2.4))+
+  ylab("")+
+  xlab("Zeit")+
+  annotate(geom = "text", y = 8.5, x = 90, label = expression("2*Lfkt"), color = "green" )+
+  annotate(geom = "text", y = 7, x = 90, label = expression("pH"), color = "blue" )+
+  annotate(geom = "text", y = 9.4, x = 88, label = "2,4*Temp")
+
+# Plotten der Regressionsgerade
+(sum <- (summary(lm(Abs~Std))))
+ggplot()+
+  geom_point(mapping = aes(Std,Abs))+
+  geom_smooth(mapping = aes(Std,Abs), method = "lm")+
+  xlab("Absorption")+
+  ylab("Konzentration")+
+# Einplotten einer Verlängerungsgeraden
+  geom_abline(slope = 0.0062000 , intercept = 0.3783333 )
+
+# Aufschlusskonstante gegen Passsagen Plotten
+Konzentration <- c( 0, 0.2880  ,4.0320 , 7.2960 , 7.4240 , 11.2000 , 10.8896 , 13.6320 , 20.5760 ,25.12 , 27.68 , 30.24 , 29.20 )
+y <- (log(30/(30- Konzentration )))
+ggplot()+
+  geom_point(mapping = aes( N , y ))+
+  geom_smooth(mapping = aes( N , y ),method = "lm")+
+  xlab("Passagen")+
+  ylab("ln(Rm/(Rm-R))")
+
+# Summary des Fit
+summary(lm(N~y))
+
+# Fumarase-Aktivität gegen die Zeit
+ggplot(mapping = aes(zeit,Aktivit))+
+  geom_point()+
+  geom_line(mapping = aes(zeit[1:8],Aktivit[1:8]), color="green",alpha=.5)+
+  geom_line(mapping = aes(zeit[8:13],Aktivit[8:13]), color="red",alpha=.5)+
+  ylab("Fum.Akt.")+
+  xlab("Zeit")
+
+# Untersuchung der Aktivitätsmessung
+Aktivit <- c(0 ,.26 , 1.07 , 1.619 , 3 , 2.3 , 3.26 , 7.22 , 15.75 , 11.3 , 10.52 , 9.98 , 12.36)
+y <- max(Aktivit) / ( max(Aktivit)-Aktivit )
+
+qplot(N, y)
+
+# Bilden von Subsets aus sinnvollen und unplausiblen Wertepaaren
+N1 <- N[1:8]
+y1 <- y[1:8]
+N2 <- N[10:13]
+y2 <- y[10:13]
+
+library(latex2exp)
+
+# Plotten der ersten Wertepaaren
+plt1 <- ggplot()+
+    geom_point(mapping = aes(N1, y1))+
+    theme_minimal()+
+# Achsenbeschriftung mit LaTeX
+    ylab(TeX("$\\frac{max(\\Delta E)}{max(\\Delta E)-\\Delta E }$"))+
+    xlab("Passagenzahl")
+
+print(plt1)
+
+# Einfügen einer Regressionsgerade
+plt2 <- plt1 + geom_smooth(mapping = aes(N1, y1), method = "lm")
+
+print(plt2)
+
+# Anfügen des 2. Subset mit Regressionsgerade in rot
+plt2 + geom_point(mapping = aes(N2, y2))+
+    geom_smooth(mapping = aes(N2, y2), method = "lm", color = "red")
+
+# Ausgabe der Fits
+(reg1 <- summary(lm( y1 ~ N1 )))
+(reg2 <- summary(lm(  y2  ~  N2  )))
+
 ```
 
